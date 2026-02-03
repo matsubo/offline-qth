@@ -40,6 +40,24 @@ async function loadLocationData() {
     }
 }
 
+// 度分秒（DMS）形式への変換
+function convertToDMS(decimal, isLatitude) {
+    const absolute = Math.abs(decimal);
+    const degrees = Math.floor(absolute);
+    const minutesDecimal = (absolute - degrees) * 60;
+    const minutes = Math.floor(minutesDecimal);
+    const seconds = ((minutesDecimal - minutes) * 60).toFixed(2);
+
+    let direction;
+    if (isLatitude) {
+        direction = decimal >= 0 ? 'N' : 'S';
+    } else {
+        direction = decimal >= 0 ? 'E' : 'W';
+    }
+
+    return `${degrees}°${minutes}'${seconds}" ${direction}`;
+}
+
 // Maidenhead Grid Locator (グリッドロケーター) の計算
 function calculateGridLocator(lat, lon) {
     // 経度を0-360の範囲に変換
@@ -172,9 +190,9 @@ function getLocation() {
             const lon = position.coords.longitude;
             const altitudeGPS = position.coords.altitude;
 
-            // 位置情報の表示
-            document.getElementById('latitude').textContent = lat.toFixed(6);
-            document.getElementById('longitude').textContent = lon.toFixed(6);
+            // 位置情報の表示（度分秒形式）
+            document.getElementById('latitude').textContent = convertToDMS(lat, true);
+            document.getElementById('longitude').textContent = convertToDMS(lon, false);
 
             // GPS標高の表示（取得できる場合）
             if (altitudeGPS !== null && altitudeGPS !== undefined) {
