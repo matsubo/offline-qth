@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { LocationData, QTHInfo } from '../types/location'
-import { getElevation, reverseGeocode, findLocationInfo } from '../utils/api'
+import { getElevation, reverseGeocode, findLocationInfo, findNearbySotaSummits } from '../utils/api'
 import { convertToDMS, calculateGridLocator } from '../utils/coordinate'
+import { useSotaData } from './useSotaData'
 
 export function useGeolocation(locationData: LocationData | null) {
   const [status, setStatus] = useState('status.ready')
   const [location, setLocation] = useState<QTHInfo | null>(null)
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [error, setError] = useState<string | null>(null)
+  const sotaData = useSotaData() // SOTAデータを読み込み
 
   // オンライン/オフライン状態の監視
   useEffect(() => {
@@ -53,7 +55,8 @@ export function useGeolocation(locationData: LocationData | null) {
           prefecture: 'location.fetching',
           city: 'location.fetching',
           jcc: 'location.fetching',
-          jcg: 'location.fetching'
+          jcg: 'location.fetching',
+          sotaSummits: findNearbySotaSummits(lat, lon, sotaData, 3) // 最寄りの3つの山頂を検索
         }
 
         setLocation(initialData)

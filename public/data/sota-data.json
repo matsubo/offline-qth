@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "lastUpdate": "2026-02-03",
+  "region": "JA",
+  "summits": [
+    {
+      "ref": "JA/YN-001",
+      "name": "富士山",
+      "nameEn": "Mt. Fuji",
+      "lat": 35.360556,
+      "lon": 138.727778,
+      "altitude": 3776,
+      "points": 10,
+      "activations": 1234,
+      "bonus": null
+    },
+    {
+      "ref": "JA/YN-002",
+      "name": "北岳",
+      "nameEn": "Mt. Kitadake",
+      "lat": 35.677222,
+      "lon": 138.236944,
+      "altitude": 3193,
+      "points": 10,
+      "activations": 456,
+      "bonus": null
+    },
+    {
+      "ref": "JA/TG-001",
+      "name": "奥穂高岳",
+      "nameEn": "Mt. Okuhotakadake",
+      "lat": 36.289444,
+      "lon": 137.645833,
+      "altitude": 3190,
+      "points": 10,
+      "activations": 789,
+      "bonus": null
+    },
+    {
+      "ref": "JA/TG-002",
+      "name": "槍ヶ岳",
+      "nameEn": "Mt. Yarigatake",
+      "lat": 36.339167,
+      "lon": 137.644722,
+      "altitude": 3180,
+      "points": 10,
+      "activations": 654,
+      "bonus": null
+    },
+    {
+      "ref": "JA/YN-010",
+      "name": "甲斐駒ヶ岳",
+      "nameEn": "Mt. Kaikoma",
+      "lat": 35.758611,
+      "lon": 138.236944,
+      "altitude": 2967,
+      "points": 8,
+      "activations": 345,
+      "bonus": null
+    },
+    {
+      "ref": "JA/TG-010",
+      "name": "立山（雄山）",
+      "nameEn": "Mt. Tateyama (Oyama)",
+      "lat": 36.575833,
+      "lon": 137.618889,
+      "altitude": 3015,
+      "points": 10,
+      "activations": 432,
+      "bonus": null
+    },
+    {
+      "ref": "JA/NN-001",
+      "name": "白馬岳",
+      "nameEn": "Mt. Shiroumadake",
+      "lat": 36.758611,
+      "lon": 137.758889,
+      "altitude": 2932,
+      "points": 8,
+      "activations": 234,
+      "bonus": null
+    },
+    {
+      "ref": "JA/NN-010",
+      "name": "妙高山",
+      "nameEn": "Mt. Myoko",
+      "lat": 36.887222,
+      "lon": 138.127222,
+      "altitude": 2454,
+      "points": 6,
+      "activations": 123,
+      "bonus": null
+    },
+    {
+      "ref": "JA/TK-001",
+      "name": "高尾山",
+      "nameEn": "Mt. Takao",
+      "lat": 35.625278,
+      "lon": 139.244722,
+      "altitude": 599,
+      "points": 1,
+      "activations": 5678,
+      "bonus": null
+    },
+    {
+      "ref": "JA/TK-002",
+      "name": "筑波山",
+      "nameEn": "Mt. Tsukuba",
+      "lat": 36.225556,
+      "lon": 140.105,
+      "altitude": 877,
+      "points": 2,
+      "activations": 3456,
+      "bonus": null
+    }
+  ]
+}

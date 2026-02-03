@@ -1,5 +1,6 @@
-import { RefreshCw, MapPin, Github, Languages } from 'lucide-react'
+import { RefreshCw, MapPin, Github, Languages, HelpCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { useLocationData } from './hooks/useLocationData'
 import { useGeolocation } from './hooks/useGeolocation'
 import { cn } from './lib/utils'
@@ -18,6 +19,13 @@ function App() {
     <div className="min-h-screen p-4 md:p-8 lg:p-10">
       <div className="mx-auto max-w-4xl">
         <header className="text-center text-white mb-10 relative animate-fade-in">
+          <Link
+            to="/help"
+            className="absolute right-20 top-0 px-4 py-2 bg-white/10 backdrop-blur-md hover:bg-white/20 rounded-xl flex items-center gap-2 transition-all duration-300 text-sm border border-white/20 shadow-lg hover:shadow-xl hover:scale-105"
+            aria-label="Help"
+          >
+            <HelpCircle className="w-4 h-4" />
+          </Link>
           <button
             onClick={toggleLanguage}
             className="absolute right-0 top-0 px-4 py-2 bg-white/10 backdrop-blur-md hover:bg-white/20 rounded-xl flex items-center gap-2 transition-all duration-300 text-sm border border-white/20 shadow-lg hover:shadow-xl hover:scale-105"
@@ -60,6 +68,36 @@ function App() {
               <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight t={t} />
               <ResultItem label={t('label.jcc')} value={location.jcc} highlight t={t} />
               <ResultItem label={t('label.jcg')} value={location.jcg} highlight t={t} />
+            </div>
+          )}
+
+          {location && location.sotaSummits && location.sotaSummits.length > 0 && (
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 backdrop-blur-xl rounded-2xl p-8 shadow-2xl animate-fade-in border border-green-300/50">
+              <h2 className="text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
+                <span>⛰️</span>
+                {t('sota.nearby')} ({location.sotaSummits.length})
+              </h2>
+
+              {location.sotaSummits.map((summit) => {
+                // 距離の表示形式を決定（1km未満はm、1km以上はkm）
+                const distanceText = summit.distance < 1000
+                  ? `${Math.round(summit.distance)}m`
+                  : `${(summit.distance / 1000).toFixed(2)}km`
+
+                return (
+                  <div key={summit.ref} className="mb-6 last:mb-0 bg-white/70 rounded-xl p-4 space-y-1">
+                    <ResultItem label={t('sota.reference')} value={summit.ref} highlight t={t} />
+                    <ResultItem
+                      label={t('sota.name')}
+                      value={i18n.language === 'ja' ? summit.name : summit.nameEn}
+                      t={t}
+                    />
+                    <ResultItem label={t('sota.altitude')} value={`${summit.altitude}m`} t={t} />
+                    <ResultItem label={t('sota.distance')} value={distanceText} highlight t={t} />
+                    <ResultItem label={t('sota.points')} value={`${summit.points} pts`} t={t} />
+                  </div>
+                )
+              })}
             </div>
           )}
 

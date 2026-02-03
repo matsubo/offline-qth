@@ -1,4 +1,5 @@
-import type { LocationData, Location, GeocodingResult } from '../types/location'
+import type { LocationData, Location, GeocodingResult, SotaData, SotaSummitWithDistance } from '../types/location'
+import { haversineDistance } from './coordinate'
 
 /**
  * 国土地理院APIで標高を取得
@@ -112,4 +113,51 @@ export function findLocationInfo(
     jcc: 'location.unknown',
     jcg: 'location.unknown'
   }
+}
+
+/**
+ * SOTAデータのロード
+ */
+export async function loadSotaData(): Promise<SotaData | null> {
+  try {
+    const basePath = import.meta.env.BASE_URL || '/'
+    const response = await fetch(`${basePath}data/sota-data.json`)
+    const data = await response.json()
+    console.log('SOTA data loaded successfully:', data)
+    return data
+  } catch (error) {
+    console.error('Failed to load SOTA data:', error)
+    return null
+  }
+}
+
+/**
+ * 現在地から最寄りのSOTA山頂を検索
+ *
+ * @param lat 現在地の緯度
+ * @param lon 現在地の経度
+ * @param sotaData SOTAデータ
+ * @param limit 取得する山頂数（デフォルト3）
+ * @returns 最寄りのSOTA山頂リスト（距離順、距離情報を含む）
+ */
+export function findNearbySotaSummits(
+  lat: number,
+  lon: number,
+  sotaData: SotaData | null,
+  limit: number = 3
+): SotaSummitWithDistance[] {
+  if (!sotaData || !sotaData.summits) {
+    return []
+  }
+
+  // 各山頂までの距離を計算し、距離順にソート
+  const nearbySummits = sotaData.summits
+    .map(summit => ({
+      ...summit,
+      distance: haversineDistance(lat, lon, summit.lat, summit.lon)
+    }))
+    .sort((a, b) => a.distance - b.distance) // 距離順にソート
+    .slice(0, limit) // 上位limit件を取得
+
+  return nearbySummits
 }
