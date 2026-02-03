@@ -71,10 +71,10 @@ export function findLocationInfo(
 ): { prefecture: string; city: string; jcc: string; jcg: string } {
   if (!locationData || !locationData.locations) {
     return {
-      prefecture: '不明',
-      city: '不明',
-      jcc: '不明',
-      jcg: '不明'
+      prefecture: 'location.unknown',
+      city: 'location.unknown',
+      jcc: 'location.unknown',
+      jcg: 'location.unknown'
     }
   }
 
@@ -104,9 +104,9 @@ export function findLocationInfo(
   }
 
   return {
-    prefecture: '不明',
-    city: '不明',
-    jcc: '不明',
-    jcg: '不明'
+    prefecture: 'location.unknown',
+    city: 'location.unknown',
+    jcc: 'location.unknown',
+    jcg: 'location.unknown'
   }
 }

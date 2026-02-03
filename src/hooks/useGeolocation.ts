@@ -93,8 +93,8 @@ export function useGeolocation(locationData: LocationData | null) {
         } else {
           // オフラインの場合
           const locationInfo = findLocationInfo(lat, lon, locationData)
-          initialData.prefecture = locationInfo.prefecture !== '不明' ? `${locationInfo.prefecture} (推定)` : 'location.unknown'
-          initialData.city = locationInfo.city !== '不明' ? `${locationInfo.city} (推定)` : 'location.unknown'
+          initialData.prefecture = locationInfo.prefecture !== 'location.unknown' ? `${locationInfo.prefecture} (推定)` : 'location.unknown'
+          initialData.city = locationInfo.city !== 'location.unknown' ? `${locationInfo.city} (推定)` : 'location.unknown'
           initialData.jcc = locationInfo.jcc
           initialData.jcg = locationInfo.jcg
           initialData.elevation = 'elevation.unavailable'
