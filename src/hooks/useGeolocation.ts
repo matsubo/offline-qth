@@ -33,6 +33,9 @@ export function useGeolocation(locationData: LocationData | null) {
     setStatus('status.fetching')
     setError(null)
 
+    // オフライン時はタイムアウトを短縮
+    const timeout = navigator.onLine ? 10000 : 5000
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const lat = position.coords.latitude
@@ -132,8 +135,8 @@ export function useGeolocation(locationData: LocationData | null) {
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
+        timeout,
+        maximumAge: 300000 // 5分間はキャッシュを使用（オフライン対応）
       }
     )
   }, [locationData])
