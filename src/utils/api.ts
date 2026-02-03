@@ -1,0 +1,112 @@
+import type { LocationData, Location, GeocodingResult } from '../types/location'
+
+/**
+ * 国土地理院APIで標高を取得
+ */
+export async function getElevation(lat: number, lon: number): Promise<number | null> {
+  try {
+    const url = `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${lon}&lat=${lat}&outtype=JSON`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    if (data.elevation !== undefined && data.elevation !== null) {
+      return Math.round(data.elevation)
+    }
+  } catch (error) {
+    console.log('標高取得エラー:', error)
+  }
+  return null
+}
+
+/**
+ * 逆ジオコーディング（OpenStreetMap Nominatim）
+ */
+export async function reverseGeocode(lat: number, lon: number): Promise<GeocodingResult | null> {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=ja`
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'OfflineQTH/2.0'
+      }
+    })
+    const data = await response.json()
+
+    if (data.address) {
+      const addr = data.address
+      const prefecture = addr.state || addr.province || ''
+      const city = addr.city || addr.town || addr.village || addr.municipality || ''
+
+      return {
+        prefecture,
+        city,
+        fullAddress: data.display_name
+      }
+    }
+  } catch (error) {
+    console.log('逆ジオコーディングエラー:', error)
+  }
+  return null
+}
+
+/**
+ * JCC/JCGデータのロード
+ */
+export async function loadLocationData(): Promise<LocationData | null> {
+  try {
+    const response = await fetch('/data/location-data.json')
+    return await response.json()
+  } catch (error) {
+    console.error('Failed to load location data:', error)
+    return null
+  }
+}
+
+/**
+ * 位置情報から都道府県・市区町村・JCC/JCGを判定
+ */
+export function findLocationInfo(
+  lat: number,
+  lon: number,
+  locationData: LocationData | null
+): { prefecture: string; city: string; jcc: string; jcg: string } {
+  if (!locationData || !locationData.locations) {
+    return {
+      prefecture: '不明',
+      city: '不明',
+      jcc: '不明',
+      jcg: '不明'
+    }
+  }
+
+  // 最も近い地点を探す
+  let minDistance = Infinity
+  let closestLocation: Location | null = null
+
+  for (const location of locationData.locations) {
+    const distance = Math.sqrt(
+      Math.pow(lat - location.lat, 2) +
+      Math.pow(lon - location.lon, 2)
+    )
+
+    if (distance < minDistance) {
+      minDistance = distance
+      closestLocation = location
+    }
+  }
+
+  if (closestLocation) {
+    return {
+      prefecture: closestLocation.prefecture,
+      city: closestLocation.city,
+      jcc: closestLocation.jcc,
+      jcg: closestLocation.jcg
+    }
+  }
+
+  return {
+    prefecture: '不明',
+    city: '不明',
+    jcc: '不明',
+    jcg: '不明'
+  }
+}

@@ -3,3 +3,10 @@
 node_modules/
 .vscode/
 .idea/
+dist/
+.backup/
+bun.lockb
+playwright-report/
+test-results/
+.env
+.env.local
