@@ -15,39 +15,43 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen p-5 md:p-10">
-      <div className="mx-auto max-w-2xl">
-        <header className="text-center text-white mb-8 relative">
+    <div className="min-h-screen p-4 md:p-8 lg:p-10">
+      <div className="mx-auto max-w-4xl">
+        <header className="text-center text-white mb-10 relative animate-fade-in">
           <button
             onClick={toggleLanguage}
-            className="absolute right-0 top-0 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg flex items-center gap-2 transition-colors text-sm"
+            className="absolute right-0 top-0 px-4 py-2 bg-white/10 backdrop-blur-md hover:bg-white/20 rounded-xl flex items-center gap-2 transition-all duration-300 text-sm border border-white/20 shadow-lg hover:shadow-xl hover:scale-105"
             aria-label="Toggle language"
           >
             <Languages className="w-4 h-4" />
             {i18n.language === 'ja' ? 'EN' : 'JA'}
           </button>
-          <h1 className="text-4xl md:text-5xl font-bold mb-3 flex items-center justify-center gap-2">
-            <MapPin className="w-8 h-8" />
+          <div className="inline-flex items-center justify-center gap-3 mb-4">
+            <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl">
+              <MapPin className="w-10 h-10 md:w-12 md:h-12" />
+            </div>
+          </div>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 tracking-tight">
             {t('app.title')}
           </h1>
-          <p className="text-lg md:text-xl opacity-90">{t('app.subtitle')}</p>
+          <p className="text-xl md:text-2xl opacity-95 font-light">{t('app.subtitle')}</p>
         </header>
 
         <main className="space-y-6">
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="text-center text-gray-700 text-lg mb-4">{t(status)}</div>
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20 animate-fade-in">
+            <div className="text-center text-white text-lg font-medium animate-pulse-slow">{t(status)}</div>
           </div>
 
           <button
             onClick={refetch}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg"
+            className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold py-5 px-8 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:shadow-orange-500/50 hover:scale-[1.02] animate-fade-in border border-white/20"
           >
-            <RefreshCw className="w-5 h-5" />
-            {t('button.refetch')}
+            <RefreshCw className="w-6 h-6" />
+            <span className="text-lg">{t('button.refetch')}</span>
           </button>
 
           {location && (
-            <div className="bg-white rounded-xl p-6 shadow-lg space-y-4">
+            <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-8 shadow-2xl space-y-1 animate-fade-in border border-white/30">
               <ResultItem label={t('label.latitude')} value={location.latitude} t={t} />
               <ResultItem label={t('label.longitude')} value={location.longitude} t={t} />
               <ResultItem label={t('label.elevation')} value={location.elevation} t={t} />
@@ -59,32 +63,47 @@ function App() {
             </div>
           )}
 
-          <div className="bg-white/95 rounded-xl p-6 shadow-lg">
-            <p className="font-bold mb-3">{t('info.title')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base">
-              <li>{t('info.autoFetch')}</li>
-              <li>{t('info.permission')}</li>
-              <li>{t('info.offline')}</li>
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20 text-white animate-fade-in">
+            <p className="font-bold mb-4 text-lg flex items-center gap-2">
+              <span className="text-2xl">ℹ️</span>
+              {t('info.title')}
+            </p>
+            <ul className="space-y-3 text-sm md:text-base leading-relaxed">
+              <li className="flex items-start gap-3">
+                <span className="text-orange-400 mt-1">▸</span>
+                <span>{t('info.autoFetch')}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-orange-400 mt-1">▸</span>
+                <span>{t('info.permission')}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-orange-400 mt-1">▸</span>
+                <span>{t('info.offline')}</span>
+              </li>
             </ul>
           </div>
         </main>
 
-        <footer className="mt-8 text-center text-white space-y-3">
+        <footer className="mt-10 text-center text-white space-y-4 animate-fade-in">
           <p className="flex items-center justify-center gap-2">
             <span className={cn(
-              "px-3 py-1 rounded-full text-sm",
-              isOnline ? "bg-green-500/30" : "bg-orange-500/30"
+              "px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border shadow-lg",
+              isOnline
+                ? "bg-green-500/30 border-green-400/50 text-green-100"
+                : "bg-orange-500/30 border-orange-400/50 text-orange-100"
             )}>
-              {isOnline ? t('footer.online') : t('footer.offline')}
+              {isOnline ? '🟢 ' + t('footer.online') : '🟠 ' + t('footer.offline')}
             </span>
           </p>
-          <p className="text-sm">
-            v{__APP_VERSION__} | {t('footer.createdBy')}{' '}
+          <p className="text-sm opacity-90">
+            <span className="font-mono bg-white/10 px-3 py-1 rounded-lg">v{__APP_VERSION__}</span>
+            {' '} | {t('footer.createdBy')}{' '}
             <a
               href="https://x.com/je1wfv"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold hover:underline"
+              className="font-bold hover:text-orange-300 transition-colors underline decoration-2 decoration-orange-400/50 hover:decoration-orange-400"
             >
               JE1WFV
             </a>
@@ -94,7 +113,7 @@ function App() {
               href="https://github.com/matsubo/offline-qth"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline flex items-center gap-1"
+              className="hover:text-orange-300 transition-colors flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300"
             >
               <Github className="w-4 h-4" />
               {t('footer.github')}
@@ -119,13 +138,18 @@ function ResultItem({ label, value, highlight, t }: ResultItemProps) {
 
   return (
     <div className={cn(
-      "flex justify-between items-center py-3 border-b last:border-0",
-      highlight && "bg-blue-50 -mx-6 px-6 py-4"
+      "flex justify-between items-center py-4 border-b border-gray-200/50 last:border-0 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 -mx-4 px-4 rounded-lg",
+      highlight && "bg-gradient-to-r from-orange-50 to-pink-50 border-orange-200/50 py-5"
     )}>
-      <span className="font-semibold text-gray-700">{label}:</span>
       <span className={cn(
-        "font-medium",
-        highlight ? "text-orange-600 text-lg" : "text-blue-600"
+        "font-semibold",
+        highlight ? "text-gray-800 text-base" : "text-gray-700"
+      )}>{label}</span>
+      <span className={cn(
+        "font-bold tabular-nums tracking-wide",
+        highlight
+          ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-pink-600 text-xl"
+          : "text-blue-700 text-lg"
       )}>
         {displayValue}
       </span>
