@@ -53,8 +53,11 @@ export async function reverseGeocode(lat: number, lon: number): Promise<Geocodin
  */
 export async function loadLocationData(): Promise<LocationData | null> {
   try {
-    const response = await fetch('/data/location-data.json')
-    return await response.json()
+    const basePath = import.meta.env.BASE_URL || '/'
+    const response = await fetch(`${basePath}data/location-data.json`)
+    const data = await response.json()
+    console.log('Location data loaded successfully:', data)
+    return data
   } catch (error) {
     console.error('Failed to load location data:', error)
     return null
