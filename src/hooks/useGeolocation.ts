@@ -66,24 +66,33 @@ export function useGeolocation(locationData: LocationData | null) {
             } else {
               initialData.elevation = 'elevation.unavailable'
             }
-
-            // 住所を取得
-            const geoData = await reverseGeocode(lat, lon)
-            if (geoData) {
-              initialData.prefecture = geoData.prefecture || 'location.unknown'
-              initialData.city = geoData.city || 'location.unknown'
-            } else {
-              initialData.prefecture = 'location.failed'
-              initialData.city = 'location.failed'
-            }
           } catch (err) {
-            console.error('API取得エラー:', err)
-            initialData.prefecture = 'location.failed'
-            initialData.city = 'location.failed'
+            console.error('標高取得エラー:', err)
             initialData.elevation = 'elevation.failed'
           }
 
-          // JCC/JCGを取得
+          // 都道府県・市区町村を逆ジオコーディングAPIで取得
+          try {
+            const geoData = await reverseGeocode(lat, lon)
+            if (geoData && geoData.prefecture && geoData.city) {
+              // API成功時はそのまま使用
+              initialData.prefecture = geoData.prefecture
+              initialData.city = geoData.city
+            } else {
+              // APIが空の結果を返した場合、ローカルデータにフォールバック
+              const locationInfo = findLocationInfo(lat, lon, locationData)
+              initialData.prefecture = locationInfo.prefecture
+              initialData.city = locationInfo.city
+            }
+          } catch (err) {
+            console.error('逆ジオコーディングエラー:', err)
+            // APIエラー時、ローカルデータにフォールバック
+            const locationInfo = findLocationInfo(lat, lon, locationData)
+            initialData.prefecture = locationInfo.prefecture
+            initialData.city = locationInfo.city
+          }
+
+          // JCC/JCGは常にローカルデータから取得（最寄りの市区町村で判定）
           const locationInfo = findLocationInfo(lat, lon, locationData)
           initialData.jcc = locationInfo.jcc
           initialData.jcg = locationInfo.jcg
