@@ -1,9 +1,24 @@
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 export function Help() {
   const { t } = useTranslation()
+  const [sotaCount, setSotaCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sotaResponse = await fetch('/offline-qth/data/sota-data.json')
+        const sotaJson = await sotaResponse.json()
+        setSotaCount(sotaJson.summits.length)
+      } catch (error) {
+        console.error("Failed to fetch SOTA data:", error)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <div className="min-h-screen p-4 md:p-8 lg:p-10">
@@ -65,7 +80,7 @@ export function Help() {
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">SOTA</h3>
-                <p>{t('help.data.sota')}</p>
+                <p>{t('help.data.sota', { count: sotaCount || '...' })}</p>
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">{t('label.elevation')}</h3>

@@ -41,6 +41,17 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         runtimeCaching: [
           {
+            urlPattern: /^https:\/\/www\.googletagmanager\.com\/gtm\.js/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'gtm-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              }
+            }
+          },
+          {
             urlPattern: /^https:\/\/cyberjapandata2\.gsi\.go\.jp\/.*/i,
             handler: 'CacheFirst',
             options: {

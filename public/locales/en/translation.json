@@ -44,7 +44,6 @@
     "github": "GitHub",
     "blog": "Blog",
     "discord": "Discord",
-    "dataStats": "Data: 1,892 JCC/JCG | 4,600 SOTA summits",
     "lastUpdated": "Updated: {{date}}",
     "jccJcgData": "JCC/JCG: {{count}}",
     "sotaData": "SOTA Summits: {{count}}"
@@ -95,7 +94,7 @@
       "title": "Data Accuracy",
       "region": "This app supports Japan only. JCC/JCG/SOTA data are all for Japan.",
       "jccJcg": "Calculated from representative coordinates of each municipality (e.g., city hall). Near municipal boundaries, adjacent municipalities' JCC/JCG may be displayed.",
-      "sota": "Uses summit data from the official SOTA database for Japan (4,600 summits). Displays the nearest summits (top 3) in order of distance.",
+      "sota": "Uses summit data from the official SOTA database for Japan ({{count}} summits). Displays the nearest summits (top 3) in order of distance.",
       "elevation": "Online: Accurate elevation from Japan GSI API. Offline: Displays 'Unavailable'.",
       "addressTitle": "Address",
       "address": "Online: Accurate address from OpenStreetMap API. Offline: Estimated from local data with '(Estimated)' label."
