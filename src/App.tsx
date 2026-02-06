@@ -127,23 +127,11 @@ function App() {
               </div>
 
               {/* Location Section */}
-              <div className="border-b border-teal-500/20 data-panel">
-                <div className="px-5 py-3 border-l-4 border-l-teal-500 relative z-10">
-                  <div className="text-[10px] font-mono-data glow-teal tracking-wider mb-2">[ LOCATION DATA ]</div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                    <ResultItem label={t('label.prefecture')} value={location.prefecture} />
-                    <ResultItem label={t('label.city')} value={location.city} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Radio Data Section */}
-              <div className="px-5 py-4 border-l-4 border-l-amber-500">
-                <div className="text-[10px] font-mono-data glow-amber tracking-wider mb-3">[ RADIO DATA ]</div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight />
-                  <ResultItem label={t('label.jcc')} value={location.jcc} />
-                  <ResultItem label={t('label.jcg')} value={location.jcg} />
+              <div className="px-5 py-3 border-l-4 border-l-teal-500 relative z-10">
+                <div className="text-[10px] font-mono-data glow-teal tracking-wider mb-2">[ LOCATION DATA ]</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                  <ResultItem label={t('label.prefecture')} value={location.prefecture} />
+                  <ResultItem label={t('label.city')} value={location.city} />
                 </div>
               </div>
             </div>
