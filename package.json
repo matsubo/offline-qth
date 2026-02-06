@@ -12,7 +12,8 @@
     "test:e2e:ui": "playwright test --ui",
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
-    "version:major": "npm version major"
+    "version:major": "npm version major",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
@@ -31,6 +32,8 @@
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "lucide-react": "^0.563.0",
     "postcss": "^8.5.6",
     "tailwind-merge": "^3.4.0",
@@ -51,5 +54,10 @@
     "react-i18next": "^16.5.4",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.13.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
   }
 }
