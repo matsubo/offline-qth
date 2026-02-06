@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { MapPin, Mountain, Navigation, ArrowLeft, ExternalLink } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { LocationMap } from '../components/LocationMap'
+import type { SotaSummit, SotaSummitWithDistance } from '../types/location'
 
 interface LocationData {
   lat: number
@@ -13,21 +14,10 @@ interface LocationData {
   jcg: string
 }
 
-interface SotaSummit {
-  ref: string
-  name: string
-  nameEn: string
-  lat: number
-  lon: number
-  altitude: number
-  points: number
-  distance?: number
-}
-
 export function LocationPage() {
   const { jcc } = useParams<{ jcc: string }>()
   const [location, setLocation] = useState<LocationData | null>(null)
-  const [nearbySota, setNearbySota] = useState<SotaSummit[]>([])
+  const [nearbySota, setNearbySota] = useState<SotaSummitWithDistance[]>([])
   const [gridLocator, setGridLocator] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
@@ -55,19 +45,32 @@ export function LocationPage() {
         const sotaJson = await sotaResponse.json()
 
         // Calculate distances and find nearby summits (within 50km)
-        const summitsWithDistance = sotaJson.summits.map((summit: SotaSummit) => ({
-          ...summit,
-          distance: calculateDistance(
+        const summitsWithDistance = sotaJson.summits.map((summit: SotaSummit) => {
+          const distance = calculateDistance(
             foundLocation.lat,
             foundLocation.lon,
             summit.lat,
             summit.lon
           )
-        }))
+          const bearing = calculateBearing(
+            foundLocation.lat,
+            foundLocation.lon,
+            summit.lat,
+            summit.lon
+          )
+          return {
+            ...summit,
+            distance,
+            bearing,
+            cardinalBearing: getCardinalBearing(bearing),
+            isActivationZone: false, // Not relevant for this page
+            verticalDistance: null
+          }
+        })
 
         const nearby = summitsWithDistance
-          .filter((s: SotaSummit) => s.distance && s.distance < 50)
-          .sort((a: SotaSummit, b: SotaSummit) => (a.distance || 0) - (b.distance || 0))
+          .filter((s: SotaSummitWithDistance) => s.distance < 50)
+          .sort((a: SotaSummitWithDistance, b: SotaSummitWithDistance) => a.distance - b.distance)
           .slice(0, 10)
 
         setNearbySota(nearby)
@@ -108,6 +111,23 @@ export function LocationPage() {
               Math.sin(dLon / 2) * Math.sin(dLon / 2)
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     return R * c
+  }
+
+  // Calculate bearing between two points
+  function calculateBearing(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180)
+    const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+              Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon)
+    const bearing = Math.atan2(y, x) * 180 / Math.PI
+    return (bearing + 360) % 360
+  }
+
+  // Convert bearing to cardinal direction
+  function getCardinalBearing(bearing: number): string {
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+    const index = Math.round(bearing / 45) % 8
+    return directions[index]
   }
 
   if (loading) {
@@ -256,9 +276,8 @@ export function LocationPage() {
               </h2>
               <div className="h-80 rounded overflow-hidden">
                 <LocationMap
-                  lat={location.lat}
-                  lon={location.lon}
-                  city={location.city}
+                  latitude={location.lat}
+                  longitude={location.lon}
                   sotaSummits={nearbySota}
                 />
               </div>
@@ -299,7 +318,7 @@ export function LocationPage() {
                           </td>
                           <td className="py-3 px-2 font-sans-clean text-gray-200">{summit.name}</td>
                           <td className="py-3 px-2 text-right font-mono-data text-green-400">
-                            {summit.distance?.toFixed(1)} km
+                            {summit.distance.toFixed(1)} km
                           </td>
                           <td className="py-3 px-2 text-right font-mono-data text-gray-300">
                             {summit.altitude}m
@@ -354,7 +373,7 @@ export function LocationPage() {
                       >
                         {nearbySota[0].name} ({nearbySota[0].ref})
                       </Link>
-                      , located {nearbySota[0].distance?.toFixed(1)}km away at {nearbySota[0].altitude}m altitude
+                      , located {nearbySota[0].distance.toFixed(1)}km away at {nearbySota[0].altitude}m altitude
                       and worth {nearbySota[0].points} points.
                     </p>
                   </section>
