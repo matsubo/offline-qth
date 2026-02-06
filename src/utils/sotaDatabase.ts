@@ -54,75 +54,28 @@ class SotaDatabase {
       this.sqlite3 = await sqlite3InitModule({
         print: console.log,
         printErr: console.error,
-        locateFile: (file: string) => {
-          // Tell SQLite where to find WASM files
-          return `${basePath}wasm/${file}`;
-        },
+        locateFile: (file: string) => `${basePath}wasm/${file}`,
       });
 
       console.log('✅ SQLite WASM initialized (version:', this.sqlite3.version.libVersion, ')');
 
-      // Try to load from OPFS (Origin Private File System) first
-      let dbData: Uint8Array | null = null;
-
-      try {
-        if ('storage' in navigator && 'getDirectory' in navigator.storage) {
-          const opfsRoot = await navigator.storage.getDirectory();
-          const fileHandle = await opfsRoot.getFileHandle('sota.db', { create: false });
-          const file = await fileHandle.getFile();
-          const arrayBuffer = await file.arrayBuffer();
-          dbData = new Uint8Array(arrayBuffer);
-          console.log('✅ Loaded database from OPFS cache');
-        } else {
-          throw new Error('OPFS not supported');
-        }
-      } catch {
-        console.log('📥 OPFS cache miss, downloading database...');
-
-        // Download from network
-        const basePath = import.meta.env.BASE_URL || '/';
-        const response = await fetch(`${basePath}data/sota.db`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch database: ${response.statusText}`);
-        }
-
-        const arrayBuffer = await response.arrayBuffer();
-        dbData = new Uint8Array(arrayBuffer);
-
-        console.log(`✅ Downloaded database (${(dbData.length / 1024 / 1024).toFixed(2)} MB)`);
-
-        // Cache in OPFS for next time
-        try {
-          if ('storage' in navigator && 'getDirectory' in navigator.storage) {
-            const opfsRoot = await navigator.storage.getDirectory();
-            const fileHandle = await opfsRoot.getFileHandle('sota.db', { create: true });
-            const writable = await fileHandle.createWritable();
-            await writable.write(dbData);
-            await writable.close();
-            console.log('✅ Cached database in OPFS');
-          }
-        } catch (cacheError) {
-          console.warn('⚠️  Failed to cache in OPFS:', cacheError);
-        }
+      // Download database from network (Service Worker will cache it)
+      console.log('📥 Downloading SOTA database...');
+      const response = await fetch(`${basePath}data/sota.db`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch database: ${response.statusText}`);
       }
 
-      // Create in-memory database and load data
-      this.db = new this.sqlite3.oo1.DB(':memory:');
+      const arrayBuffer = await response.arrayBuffer();
+      const dbData = new Uint8Array(arrayBuffer);
+      console.log(`✅ Downloaded database (${(dbData.length / 1024 / 1024).toFixed(2)} MB)`);
 
-      // Load database from Uint8Array
-      const ptrSource = this.sqlite3.wasm.allocFromTypedArray(dbData);
-      const rc = this.sqlite3.capi.sqlite3_deserialize(
-        this.db.pointer,
-        'main',
-        ptrSource,
-        dbData.length,
-        dbData.length,
-        this.sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE
+      // Write database to the in-memory VFS filesystem, then open it
+      const vfsFilename = '/sota.db';
+      this.sqlite3.capi.sqlite3_js_vfs_create_file(
+        '', vfsFilename, dbData
       );
-
-      if (rc !== 0) {
-        throw new Error(`Failed to deserialize database (error code: ${rc})`);
-      }
+      this.db = new this.sqlite3.oo1.DB(vfsFilename, 'r');
 
       // Verify database integrity
       const count = this.db.selectValue('SELECT COUNT(*) FROM summits');
