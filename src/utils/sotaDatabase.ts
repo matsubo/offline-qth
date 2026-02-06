@@ -50,9 +50,14 @@ class SotaDatabase {
       console.log('🏔️  Initializing SOTA Database...');
 
       // Initialize SQLite WASM
+      const basePath = import.meta.env.BASE_URL || '/';
       this.sqlite3 = await sqlite3InitModule({
         print: console.log,
         printErr: console.error,
+        locateFile: (file: string) => {
+          // Tell SQLite where to find WASM files
+          return `${basePath}wasm/${file}`;
+        },
       });
 
       console.log('✅ SQLite WASM initialized (version:', this.sqlite3.version.libVersion, ')');
