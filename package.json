@@ -1,6 +1,6 @@
 {
   "name": "offline-qth",
-  "version": "2.1.1",
+  "version": "2.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,6 +19,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
     "@types/bun": "latest",
+    "@types/leaflet": "^1.9.21",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
@@ -44,9 +45,11 @@
   "dependencies": {
     "i18next": "^25.8.1",
     "i18next-browser-languagedetector": "^8.2.0",
+    "leaflet": "^1.9.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-i18next": "^16.5.4",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.13.0"
   }
 }

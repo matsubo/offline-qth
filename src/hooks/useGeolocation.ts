@@ -65,7 +65,7 @@ export function useGeolocation(locationData: LocationData | null) {
                   city: 'location.fetching',
                   jcc: 'location.fetching',
                   jcg: 'location.fetching',
-                  sotaSummits: findNearbySotaSummits(lat, lon, sotaData, 3)
+                  sotaSummits: findNearbySotaSummits(lat, lon, sotaData, 10)
                 }
         
                 setLocation(initialData)

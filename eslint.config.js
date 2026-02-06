@@ -5,6 +5,16 @@ import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default [
+  {
+    ignores: [
+      'dist/**',
+      '.backup/**',
+      'node_modules/**',
+      'playwright.config.ts',
+      'scripts/**',
+      '**/*.cjs'
+    ]
+  },
   js.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
@@ -16,6 +26,17 @@ export default [
         ecmaFeatures: {
           jsx: true
         }
+      },
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        // Vite globals
+        __APP_VERSION__: 'readonly'
       }
     },
     plugins: {

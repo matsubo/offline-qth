@@ -21,96 +21,117 @@ export function Help() {
   }, [])
 
   return (
-    <div className="min-h-screen p-4 md:p-8 lg:p-10">
+    <div className="min-h-screen p-4 md:p-8 lg:p-10 relative z-10">
       <div className="mx-auto max-w-4xl">
         <header className="mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-white hover:text-orange-300 transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-            {t('help.backToHome')}
+          <Link to="/" className="inline-flex items-center gap-2 font-mono-data text-teal-400 hover:text-amber-400 transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm tracking-wider">{t('help.backToHome')}</span>
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mt-4">{t('help.title')}</h1>
+          <div className="card-technical rounded-none border-l-4 border-l-amber-500 p-6 corner-accent">
+            <div className="text-xs font-mono-data glow-teal mb-2 tracking-wider">DOCUMENTATION</div>
+            <h1 className="text-4xl md:text-5xl font-display glow-amber">{t('help.title')}</h1>
+          </div>
         </header>
 
         <main className="space-y-6">
           {/* Section 1: オフラインの仕組み */}
-          <section className="bg-white/95 rounded-2xl p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>📱</span>
+          <section className="card-technical rounded-none border-l-4 border-l-green-500 p-6 corner-accent">
+            <h2 className="text-2xl font-display glow-green mb-4 flex items-center gap-3">
+              <span className="text-3xl">📱</span>
               {t('help.offline.title')}
             </h2>
-            <div className="prose max-w-none text-gray-700 space-y-4">
+            <div className="space-y-4 text-teal-100/90 font-body leading-relaxed">
               <p>{t('help.offline.pwa')}</p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>{t('help.offline.cache')}</li>
-                <li>{t('help.offline.data')}</li>
-                <li>{t('help.offline.gps')}</li>
-              </ul>
+              <div className="data-panel rounded p-4 space-y-2 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="text-amber-400 mt-1">▹</span>
+                  <span>{t('help.offline.cache')}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-amber-400 mt-1">▹</span>
+                  <span>{t('help.offline.data')}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-amber-400 mt-1">▹</span>
+                  <span>{t('help.offline.gps')}</span>
+                </div>
+              </div>
             </div>
           </section>
 
           {/* Section 2: 位置情報の精度 */}
-          <section className="bg-white/95 rounded-2xl p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>📍</span>
+          <section className="card-technical rounded-none border-l-4 border-l-teal-500 p-6 corner-accent">
+            <h2 className="text-2xl font-display glow-teal mb-4 flex items-center gap-3">
+              <span className="text-3xl">📍</span>
               {t('help.accuracy.title')}
             </h2>
-            <div className="prose max-w-none text-gray-700 space-y-4">
+            <div className="space-y-4 text-teal-100/90 font-body leading-relaxed">
               <p>{t('help.accuracy.gpsLimits')}</p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>{t('help.accuracy.obstacles')}</li>
-                <li>{t('help.accuracy.agps')}</li>
-                <li>{t('help.accuracy.estimation')}</li>
-              </ul>
+              <div className="data-panel rounded p-4 space-y-2 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="text-teal-400 mt-1">▹</span>
+                  <span>{t('help.accuracy.obstacles')}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-teal-400 mt-1">▹</span>
+                  <span>{t('help.accuracy.agps')}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-teal-400 mt-1">▹</span>
+                  <span>{t('help.accuracy.estimation')}</span>
+                </div>
+              </div>
             </div>
           </section>
 
           {/* Section 3: データの精度 */}
-          <section className="bg-white/95 rounded-2xl p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>📊</span>
+          <section className="card-technical rounded-none border-l-4 border-l-amber-500 p-6 corner-accent">
+            <h2 className="text-2xl font-display glow-amber mb-4 flex items-center gap-3">
+              <span className="text-3xl">📊</span>
               {t('help.data.title')}
             </h2>
-            <div className="prose max-w-none text-gray-700 space-y-4">
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
-                <p className="font-bold text-blue-900">🗾 {t('help.data.region')}</p>
+            <div className="space-y-5 text-teal-100/90 font-body leading-relaxed">
+              <div className="data-panel rounded border-l-4 border-l-blue-400 p-4">
+                <p className="font-bold text-blue-300">🗾 {t('help.data.region')}</p>
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2">JCC/JCG</h3>
-                <p>{t('help.data.jccJcg')}</p>
+                <h3 className="font-display text-lg mb-2 text-teal-300 tracking-wide">JCC/JCG</h3>
+                <p className="text-sm">{t('help.data.jccJcg')}</p>
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2">SOTA</h3>
-                <p>{sotaCount ? t('help.data.sota', { count: sotaCount }) : '...'}</p>
+                <h3 className="font-display text-lg mb-2 text-teal-300 tracking-wide">SOTA</h3>
+                <p className="text-sm">{sotaCount ? t('help.data.sota', { count: sotaCount }) : '...'}</p>
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2">{t('label.elevation')}</h3>
-                <p>{t('help.data.elevation')}</p>
+                <h3 className="font-display text-lg mb-2 text-teal-300 tracking-wide">{t('label.elevation')}</h3>
+                <p className="text-sm">{t('help.data.elevation')}</p>
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2">{t('help.data.addressTitle')}</h3>
-                <p>{t('help.data.address')}</p>
+                <h3 className="font-display text-lg mb-2 text-teal-300 tracking-wide">{t('help.data.addressTitle')}</h3>
+                <p className="text-sm">{t('help.data.address')}</p>
               </div>
             </div>
           </section>
 
           {/* Section 4: トラブルシューティング */}
-          <section className="bg-white/95 rounded-2xl p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>🔧</span>
+          <section className="card-technical rounded-none border-l-4 border-l-red-500 p-6 corner-accent">
+            <h2 className="text-2xl font-display text-red-400 mb-4 flex items-center gap-3">
+              <span className="text-3xl">🔧</span>
               {t('help.troubleshooting.title')}
             </h2>
-            <div className="prose max-w-none text-gray-700 space-y-4">
-              <div>
-                <h3 className="font-bold text-lg mb-2">❌ {t('help.troubleshooting.noLocationTitle')}</h3>
-                <p>{t('help.troubleshooting.noLocation')}</p>
+            <div className="space-y-5 text-teal-100/90 font-body leading-relaxed">
+              <div className="data-panel rounded p-4">
+                <h3 className="font-display text-base mb-2 text-red-300 tracking-wide">❌ {t('help.troubleshooting.noLocationTitle')}</h3>
+                <p className="text-sm">{t('help.troubleshooting.noLocation')}</p>
               </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">⏱️ {t('help.troubleshooting.slowTitle')}</h3>
-                <p>{t('help.troubleshooting.slow')}</p>
+              <div className="data-panel rounded p-4">
+                <h3 className="font-display text-base mb-2 text-yellow-300 tracking-wide">⏱️ {t('help.troubleshooting.slowTitle')}</h3>
+                <p className="text-sm">{t('help.troubleshooting.slow')}</p>
               </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">⚠️ {t('help.troubleshooting.wrongDataTitle')}</h3>
-                <p>{t('help.troubleshooting.wrongData')}</p>
+              <div className="data-panel rounded p-4">
+                <h3 className="font-display text-base mb-2 text-orange-300 tracking-wide">⚠️ {t('help.troubleshooting.wrongDataTitle')}</h3>
+                <p className="text-sm">{t('help.troubleshooting.wrongData')}</p>
               </div>
             </div>
           </section>
@@ -119,7 +140,7 @@ export function Help() {
         <footer className="mt-10 text-center">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md hover:bg-white/20 rounded-xl text-white transition-all duration-300 border border-white/20 shadow-lg hover:shadow-xl hover:scale-105"
+            className="btn-primary inline-flex items-center gap-2 px-8 py-4 rounded text-slate-900 font-display text-base tracking-wider transition-all duration-300"
           >
             <ArrowLeft className="w-5 h-5" />
             {t('help.backToHome')}

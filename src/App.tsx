@@ -1,4 +1,4 @@
-import { RefreshCw, Github, Languages, HelpCircle, Navigation, Mountain, BookOpen, MessageCircle } from 'lucide-react'
+import { RefreshCw, Github, Languages, HelpCircle, Navigation, Mountain, BookOpen, MessageCircle, MapPin, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useLocationData } from './hooks/useLocationData'
@@ -6,6 +6,7 @@ import { useGeolocation } from './hooks/useGeolocation'
 import { cn } from './lib/utils'
 import { useState, useEffect } from 'react'
 import { trackLanguageChange, trackSotaSummitView } from './utils/analytics'
+import { LocationMap } from './components/LocationMap'
 
 function App() {
   const { t, i18n } = useTranslation()
@@ -16,6 +17,7 @@ function App() {
   const [sotaCount, setSotaCount] = useState<number | null>(null)
   const [locationDataLastUpdate, setLocationDataLastUpdate] = useState<string | null>(null)
   const [sotaDataLastUpdate, setSotaDataLastUpdate] = useState<string | null>(null)
+  const [showMap, setShowMap] = useState<boolean>(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +48,7 @@ function App() {
         nearestSummit.distance
       )
     }
-  }, [location?.sotaSummits])
+  }, [location])
 
   const toggleLanguage = () => {
     const currentLang = i18n.language
@@ -58,167 +60,281 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8 text-slate-200">
-      <div className="mx-auto max-w-3xl">
-        <header className="flex justify-between items-center mb-5 animate-fade-in">
-          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tighter">
-            Offline QTH
-          </h1>
-          <div className="flex items-center gap-2">
-            <Link to="/help" className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
-              <HelpCircle className="w-5 h-5" />
-            </Link>
-            <button
-              onClick={toggleLanguage}
-              className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-              aria-label="Toggle language"
-            >
-              <Languages className="w-5 h-5" />
-            </button>
+    <div className="min-h-screen p-4 sm:p-6 md:p-8 relative z-10">
+      <div className="mx-auto max-w-4xl">
+        <header className="mb-8 animate-fade-in">
+          <div className="card-technical rounded-none border-l-4 border-l-amber-500 p-5 corner-accent">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="text-xs font-mono-data glow-teal mb-1 tracking-wider">SYSTEM_ID: QTH-LOCATOR-v{__APP_VERSION__}</div>
+                <h1 className="text-4xl md:text-5xl font-display glow-amber">
+                  OFFLINE QTH
+                </h1>
+                <div className="text-xs font-mono text-teal-400/60 mt-1">GPS // JCC/JCG // GRID LOCATOR // SOTA</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/help"
+                  className="p-2.5 rounded border border-teal-500/30 bg-black/30 hover:bg-teal-500/10 hover:border-teal-500/60 transition-all"
+                >
+                  <HelpCircle className="w-5 h-5 text-teal-400" />
+                </Link>
+                <button
+                  onClick={toggleLanguage}
+                  className="p-2.5 rounded border border-teal-500/30 bg-black/30 hover:bg-teal-500/10 hover:border-teal-500/60 transition-all"
+                  aria-label="Toggle language"
+                >
+                  <Languages className="w-5 h-5 text-teal-400" />
+                </button>
+              </div>
+            </div>
           </div>
         </header>
 
-        <main className="space-y-5">
-          <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl p-4 border border-slate-700/80 shadow-2xl animate-fade-in">
-            <div className="text-center text-slate-300 text-sm font-medium animate-pulse-slow">{t(status)}</div>
+        <main className="space-y-6">
+          <div className="card-technical rounded p-4 animate-fade-in">
+            <div className="flex items-center justify-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-teal-400 status-indicator"></div>
+              <div className="text-center font-mono-data text-sm tracking-wider text-teal-300">{t(status)}</div>
+            </div>
           </div>
 
           <button
             onClick={refetch}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2.5 transition-all duration-300 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50 border border-indigo-400/50 hover:scale-[1.01] animate-fade-in"
+            className="w-full btn-primary text-slate-900 font-display text-lg py-4 px-8 rounded flex items-center justify-center gap-3 animate-fade-in"
           >
             <RefreshCw className="w-5 h-5" />
-            <span className="text-base tracking-wide">{t('button.refetch')}</span>
+            <span className="tracking-wide">{t('button.refetch')}</span>
           </button>
 
           {location && (
-            <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-700/80 animate-fade-in overflow-hidden">
-              <div className="px-5 py-4 space-y-1.5">
-                <ResultItem label={t('label.latitude')} value={location.latitude} />
-                <ResultItem label={t('label.longitude')} value={location.longitude} />
-                {location.accuracy && <ResultItem label={t('label.accuracy')} value={`±${Math.round(location.accuracy)}m`} />}
-                <ResultItem label={t('label.elevation')} value={t(location.elevation)} />
+            <div className="card-technical rounded-none animate-fade-in overflow-hidden corner-accent">
+              {/* GPS Coordinates Section */}
+              <div className="border-b border-teal-500/20 bg-black/20">
+                <div className="px-5 py-3 border-l-4 border-l-green-500">
+                  <div className="text-[10px] font-mono-data glow-green tracking-wider mb-2">[ GPS COORDINATES ]</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <ResultItem label={t('label.latitude')} value={location.latitude} />
+                    <ResultItem label={t('label.longitude')} value={location.longitude} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mt-3">
+                    {location.accuracy && <ResultItem label={t('label.accuracy')} value={`±${Math.round(location.accuracy)}m`} />}
+                    <ResultItem label={t('label.elevation')} value={t(location.elevation)} />
+                  </div>
+                </div>
               </div>
-              <div className="bg-slate-900/50 px-5 py-3.5 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2">
-                <ResultItem label={t('label.prefecture')} value={location.prefecture} />
-                <ResultItem label={t('label.city')} value={location.city} />
+
+              {/* Location Section */}
+              <div className="border-b border-teal-500/20 data-panel">
+                <div className="px-5 py-3 border-l-4 border-l-teal-500 relative z-10">
+                  <div className="text-[10px] font-mono-data glow-teal tracking-wider mb-2">[ LOCATION DATA ]</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                    <ResultItem label={t('label.prefecture')} value={location.prefecture} />
+                    <ResultItem label={t('label.city')} value={location.city} />
+                  </div>
+                </div>
               </div>
-              <div className="px-5 py-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight />
-                <ResultItem label={t('label.jcc')} value={location.jcc} highlight />
-                <ResultItem label={t('label.jcg')} value={location.jcg} highlight />
+
+              {/* Amateur Radio Data Section */}
+              <div className="px-5 py-4 border-l-4 border-l-amber-500">
+                <div className="text-[10px] font-mono-data glow-amber tracking-wider mb-3">[ AMATEUR RADIO DATA ]</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight />
+                  <ResultItem label={t('label.jcc')} value={location.jcc} highlight />
+                  <ResultItem label={t('label.jcg')} value={location.jcg} highlight />
+                </div>
               </div>
+            </div>
+          )}
+
+          {/* Map Section */}
+          {location && (
+            <div className="animate-fade-in space-y-3">
+              <button
+                onClick={() => setShowMap(!showMap)}
+                className="w-full card-technical rounded-none p-4 border-l-4 border-l-blue-500 flex items-center justify-between hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-6 h-6 text-blue-400" />
+                  <h2 className="font-display text-xl text-blue-400 tracking-wider">
+                    MAP VIEW
+                  </h2>
+                </div>
+                {showMap ? <ChevronUp className="w-5 h-5 text-blue-400" /> : <ChevronDown className="w-5 h-5 text-blue-400" />}
+              </button>
+
+              {showMap && (
+                <LocationMap
+                  latitude={location.latRaw}
+                  longitude={location.lonRaw}
+                  sotaSummits={location.sotaSummits}
+                  isOnline={isOnline}
+                />
+              )}
             </div>
           )}
 
           {location && location.sotaSummits && location.sotaSummits.length > 0 && (
             <div className="animate-fade-in space-y-3">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 px-1">
-                <Mountain className="w-5 h-5 text-indigo-400" />
-                {t('sota.nearby')}
-              </h2>
-              {location.sotaSummits.map((summit) => (
-                <div key={summit.ref} className="bg-slate-800/50 backdrop-blur-md rounded-xl shadow-xl border border-slate-700/80 relative overflow-hidden">
-                  <div className={cn(
-                    "absolute top-2.5 right-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full z-10",
-                    summit.isActivationZone ? "bg-green-500 text-white animate-pulse" : "bg-red-500 text-white"
-                  )}>
-                    {t('sota.rangeQuestion')} {summit.isActivationZone ? t('sota.activationZone') : t('sota.outOfRange')}
-                  </div>
-                  <div className="p-4 grid grid-cols-3 gap-3">
-                    <div className="col-span-2 space-y-1.5">
-                      <ResultItem label={t('sota.reference')} value={summit.ref} highlight />
-                      <ResultItem
-                        label={t('sota.name')}
-                        value={i18n.language === 'ja' ? summit.name : summit.nameEn}
-                      />
-                      <ResultItem label={t('sota.altitude')} value={`${summit.altitude}m`} />
-                      <ResultItem label={t('sota.points')} value={`${summit.points} pts`} />
+              <div className="card-technical rounded-none p-3 border-l-4 border-l-green-500">
+                <h2 className="font-display text-lg glow-green flex items-center gap-2 tracking-wider">
+                  <Mountain className="w-5 h-5" />
+                  {t('sota.nearby')} ({location.sotaSummits.length})
+                </h2>
+              </div>
+
+              <div className="card-technical rounded-none overflow-hidden border-l-4 border-l-teal-500">
+                {/* Table Header */}
+                <div className="grid grid-cols-10 gap-2 px-3 py-2 bg-black/40 border-b border-teal-500/20 text-[10px] font-mono-data text-teal-400/60 tracking-wider">
+                  <div className="col-span-1">#</div>
+                  <div className="col-span-3">REF / NAME</div>
+                  <div className="col-span-2">DISTANCE</div>
+                  <div className="col-span-2">BEARING</div>
+                  <div className="col-span-2">ALT / PTS</div>
+                </div>
+
+                {/* Summit Rows */}
+                {location.sotaSummits.map((summit, index) => (
+                  <div
+                    key={summit.ref}
+                    className={cn(
+                      "grid grid-cols-10 gap-2 px-3 py-2.5 border-b border-teal-500/10 hover:bg-teal-500/5 transition-colors group cursor-pointer",
+                      index % 2 === 0 ? "bg-black/20" : "bg-black/10"
+                    )}
+                    onClick={() => isOnline && window.open(`https://www.sotamaps.org/index.php?smt=${summit.ref}`, '_blank')}
+                  >
+                    {/* Number */}
+                    <div className="col-span-1 flex items-center">
+                      <span className="font-mono-data text-teal-400 text-sm">{index + 1}</span>
                     </div>
-                    <div className="col-span-1 flex flex-col items-center justify-center space-y-1.5 bg-slate-900/50 rounded-lg p-2">
-                      <div className="text-indigo-400 font-bold text-2xl">
+
+                    {/* Reference & Name */}
+                    <div className="col-span-3 flex flex-col justify-center">
+                      <div className="font-mono-data text-amber-400 text-sm tracking-wide flex items-center gap-1.5">
+                        {summit.ref}
+                        {isOnline && (
+                          <ExternalLink className="w-3 h-3 text-teal-400/50 group-hover:text-teal-400 transition-colors" />
+                        )}
+                      </div>
+                      <div className="text-teal-100/80 text-xs truncate">
+                        {i18n.language === 'ja' ? summit.name : summit.nameEn}
+                      </div>
+                    </div>
+
+                    {/* Distance */}
+                    <div className="col-span-2 flex items-center">
+                      <span className="font-mono-data text-amber-300 text-sm">
                         {summit.distance < 1000
                           ? `${Math.round(summit.distance)}m`
                           : `${(summit.distance / 1000).toFixed(1)}km`
                         }
+                      </span>
+                    </div>
+
+                    {/* Bearing */}
+                    <div className="col-span-2 flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-full border border-teal-500/40 flex items-center justify-center bg-black/40">
+                        <Navigation className="w-3 h-3 text-teal-400" style={{ transform: `rotate(${summit.bearing}deg)` }} />
                       </div>
-                      <div className="flex items-center gap-1.5 text-slate-300 text-sm">
-                        <Navigation className="w-3.5 h-3.5 text-indigo-400" style={{ transform: `rotate(${summit.bearing}deg)` }} />
-                        <span className="font-semibold">{summit.cardinalBearing}</span>
-                        <span className="text-xs text-slate-400">{Math.round(summit.bearing)}°</span>
-                      </div>
+                      <span className="font-mono-data text-teal-300 text-xs">{summit.cardinalBearing}</span>
+                    </div>
+
+                    {/* Altitude & Points */}
+                    <div className="col-span-2 flex flex-col justify-center text-xs">
+                      <div className="text-teal-100/80">{summit.altitude}m</div>
+                      <div className="text-teal-400/60">{summit.points} pts</div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </main>
 
-        <footer className="mt-10 pt-5 border-t border-slate-700/30 animate-fade-in">
-          <div className="text-center text-xs text-slate-500 space-y-2.5">
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              <span className={cn(
-                "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
-                isOnline
-                  ? "text-green-400/80"
-                  : "text-orange-400/80"
-              )}>
-                <span className="text-[8px]">●</span> {isOnline ? t('footer.online') : t('footer.offline')}
-              </span>
-              <span className="text-slate-700">·</span>
-              <span className="font-mono text-slate-600">v{__APP_VERSION__}</span>
-              <span className="text-slate-700">·</span>
-              <span>
-                {t('footer.createdBy')}{' '}
+        <footer className="mt-12 animate-fade-in">
+          <div className="card-technical rounded-none border-l-4 border-l-teal-500/40 p-5">
+            <div className="space-y-4">
+              {/* Status Bar */}
+              <div className="flex items-center justify-between border-b border-teal-500/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className={cn(
+                    "w-2 h-2 rounded-full",
+                    isOnline ? "bg-green-500 status-indicator" : "bg-orange-500"
+                  )}></div>
+                  <span className="font-mono-data text-xs tracking-wider text-teal-400/80">
+                    {isOnline ? t('footer.online') : t('footer.offline')}
+                  </span>
+                </div>
+                <div className="font-mono-data text-[10px] text-teal-500/60 tracking-wider">
+                  SYS_v{__APP_VERSION__}
+                </div>
+              </div>
+
+              {/* Creator Info */}
+              <div className="text-center">
+                <div className="text-[10px] font-mono-data text-teal-500/60 tracking-wider mb-1">SYSTEM OPERATOR</div>
+                <div className="text-sm font-mono">
+                  <span className="text-teal-400/60">{t('footer.createdBy')}</span>{' '}
+                  <a
+                    href="https://x.com/je1wfv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold glow-amber hover:text-amber-400 transition-colors"
+                  >
+                    JE1WFV
+                  </a>
+                </div>
+              </div>
+
+              {/* Links */}
+              <div className="flex items-center justify-center gap-5 border-t border-teal-500/10 pt-3">
                 <a
-                  href="https://x.com/je1wfv"
+                  href="https://je1wfv.teraren.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-slate-400 hover:text-indigo-400 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
                 >
-                  JE1WFV
+                  <BookOpen className="w-4 h-4" />
+                  <span className="text-xs font-mono-data">{t('footer.blog')}</span>
                 </a>
-              </span>
-            </div>
+                <div className="w-px h-4 bg-teal-500/20"></div>
+                <a
+                  href="https://discord.gg/Fztt8jwr6A"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span className="text-xs font-mono-data">{t('footer.discord')}</span>
+                </a>
+                <div className="w-px h-4 bg-teal-500/20"></div>
+                <a
+                  href="https://github.com/matsubo/offline-qth"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
+                >
+                  <Github className="w-4 h-4" />
+                  <span className="text-xs font-mono-data">{t('footer.github')}</span>
+                </a>
+              </div>
 
-            <div className="flex items-center justify-center gap-3">
-              <a
-                href="https://je1wfv.teraren.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors"
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{t('footer.blog')}</span>
-              </a>
-              <a
-                href="https://discord.gg/Fztt8jwr6A"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors"
-              >
-                <MessageCircle className="w-3.5 h-3.5" />
-                <span>{t('footer.discord')}</span>
-              </a>
-              <a
-                href="https://github.com/matsubo/offline-qth"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors"
-              >
-                <Github className="w-3.5 h-3.5" />
-                <span>{t('footer.github')}</span>
-              </a>
-            </div>
+              {/* Database Stats */}
+              <div className="text-center border-t border-teal-500/10 pt-3">
+                <div className="text-[9px] font-mono-data text-teal-500/50 tracking-wider">
+                  {jccJcgCount && sotaCount && (
+                    <span>DATABASE: {t('footer.jccJcgData', { count: jccJcgCount })} / {t('footer.sotaData', { count: sotaCount })}</span>
+                  )}
+                  {(locationDataLastUpdate || sotaDataLastUpdate) && (
+                    <span> {'// '}{t('footer.lastUpdated', { date: locationDataLastUpdate || sotaDataLastUpdate })}</span>
+                  )}
+                </div>
+              </div>
 
-            <div className="text-slate-600 pb-4">
-              {jccJcgCount && sotaCount && (
-                <span>{t('footer.jccJcgData', { count: jccJcgCount })} / {t('footer.sotaData', { count: sotaCount })}</span>
-              )}
-              {(locationDataLastUpdate || sotaDataLastUpdate) && (
-                <span> · {t('footer.lastUpdated', { date: locationDataLastUpdate || sotaDataLastUpdate })}</span>
-              )}
+              {/* 73 Sign-off */}
+              <div className="text-center border-t border-teal-500/10 pt-3">
+                <div className="font-display text-sm glow-green tracking-wider">73 DE JE1WFV</div>
+              </div>
             </div>
           </div>
         </footer>
@@ -234,25 +350,28 @@ interface ResultItemProps {
 }
 
 function ResultItem({ label, value, highlight }: ResultItemProps) {
-  const displayValue = value || '...'
+  const displayValue = value || '---'
+
+  if (highlight) {
+    return (
+      <div className="data-panel rounded p-3 text-center relative">
+        <div className="text-[9px] font-mono-data text-teal-400/60 tracking-wider mb-1.5">{label}</div>
+        <div className="font-mono-data text-2xl glow-amber tracking-wider">
+          {displayValue}
+        </div>
+        {/* Corner accent for highlighted items */}
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-amber-500/40"></div>
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-amber-500/40"></div>
+      </div>
+    )
+  }
 
   return (
-    <div className={cn(
-      "py-0.5",
-      highlight && "text-center"
-    )}>
-      <span className={cn(
-        "text-xs font-medium",
-        highlight ? "block text-indigo-400" : "text-slate-400"
-      )}>{label}</span>
-      <span className={cn(
-        "font-semibold tracking-wide block",
-        highlight
-          ? "text-xl text-white"
-          : "text-base text-white"
-      )}>
+    <div className="py-0.5">
+      <div className="text-[10px] font-mono-data text-teal-500/60 tracking-wider mb-0.5">{label}</div>
+      <div className="font-mono text-base text-teal-100 tracking-wide">
         {displayValue}
-      </span>
+      </div>
     </div>
   )
 }

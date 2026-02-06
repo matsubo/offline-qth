@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import App from './App.tsx'
 import { Help } from './pages/Help.tsx'
 import './index.css'
+import 'leaflet/dist/leaflet.css'
 import './i18n'
 import { trackPageView } from './utils/analytics'
 

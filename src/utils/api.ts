@@ -165,14 +165,14 @@ export async function loadSotaData(): Promise<SotaData | null> {
  * @param lat 現在地の緯度
  * @param lon 現在地の経度
  * @param sotaData SOTAデータ
- * @param limit 取得する山頂数（デフォルト3）
+ * @param limit 取得する山頂数（デフォルト10）
  * @returns 最寄りのSOTA山頂リスト（距離順、距離・方位情報を含む）
  */
 export function findNearbySotaSummits(
   lat: number,
   lon: number,
   sotaData: SotaData | null,
-  limit: number = 3
+  limit: number = 10
 ): SotaSummitWithDistance[] {
   if (!sotaData || !sotaData.summits) {
     return []

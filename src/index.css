@@ -1,22 +1,159 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --background-start-rgb: 15, 23, 42;
-  --background-end-rgb: 4, 1, 15;
-  --primary-glow: 224, 231, 255, 0.2;
-  --secondary-glow: 199, 210, 254, 0.2;
+  /* Technical Cartography Color System */
+  --bg-base: 12, 16, 24;
+  --bg-panel: 18, 24, 36;
+  --accent-amber: 255, 169, 51;
+  --accent-teal: 51, 204, 204;
+  --accent-green: 102, 255, 153;
+  --grid-line: 51, 204, 204;
+  --contour-line: 26, 42, 64;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: theme('colors.slate.200');
-  background: linear-gradient(to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb)));
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #e8eef5;
+  background:
+    /* Topographic contour pattern */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 49px,
+      rgba(var(--contour-line), 0.3) 49px,
+      rgba(var(--contour-line), 0.3) 50px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 49px,
+      rgba(var(--contour-line), 0.2) 49px,
+      rgba(var(--contour-line), 0.2) 50px
+    ),
+    /* Diagonal technical grid */
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 99px,
+      rgba(var(--grid-line), 0.05) 99px,
+      rgba(var(--grid-line), 0.05) 100px
+    ),
+    /* Base gradient */
+    radial-gradient(ellipse at 30% 20%, rgba(var(--accent-teal), 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(var(--accent-amber), 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, rgb(var(--bg-base)) 0%, rgb(14, 18, 28) 100%);
   background-attachment: fixed;
   min-height: 100vh;
+  position: relative;
 }
 
+/* Scanline effect for CRT feel */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* Typography styles */
+.font-display {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.font-mono-data {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.font-body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Card with technical borders */
+.card-technical {
+  position: relative;
+  background: linear-gradient(135deg, rgba(var(--bg-panel), 0.6) 0%, rgba(var(--bg-panel), 0.8) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--grid-line), 0.2);
+  box-shadow:
+    0 0 0 1px rgba(var(--grid-line), 0.1) inset,
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(var(--accent-teal), 0.03);
+}
+
+.card-technical::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(var(--accent-teal), 0.5) 50%,
+    transparent 100%
+  );
+}
+
+/* Data display panels */
+.data-panel {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(var(--grid-line), 0.15);
+  position: relative;
+}
+
+.data-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(var(--accent-teal), 0.02) 3px,
+      rgba(var(--accent-teal), 0.02) 4px
+    );
+  pointer-events: none;
+}
+
+/* Glowing accent text */
+.glow-amber {
+  color: rgb(var(--accent-amber));
+  text-shadow: 0 0 10px rgba(var(--accent-amber), 0.5);
+}
+
+.glow-teal {
+  color: rgb(var(--accent-teal));
+  text-shadow: 0 0 10px rgba(var(--accent-teal), 0.4);
+}
+
+.glow-green {
+  color: rgb(var(--accent-green));
+  text-shadow: 0 0 10px rgba(var(--accent-green), 0.5);
+}
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -33,13 +170,11 @@ body {
 }
 
 @keyframes pulse-slow {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
   }
-
   50% {
-    opacity: 0.8;
+    opacity: 0.7;
   }
 }
 
@@ -47,12 +182,109 @@ body {
   animation: pulse-slow 2s ease-in-out infinite;
 }
 
-/* For bearing arrow */
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
   }
-  to {
-    transform: rotate(360deg);
+  100% {
+    transform: translateY(100vh);
   }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.btn-primary {
+  position: relative;
+  background: linear-gradient(135deg,
+    rgba(var(--accent-amber), 0.9) 0%,
+    rgba(var(--accent-amber), 0.7) 100%
+  );
+  border: 2px solid rgb(var(--accent-amber));
+  box-shadow:
+    0 0 20px rgba(var(--accent-amber), 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg,
+    rgba(var(--accent-amber), 1) 0%,
+    rgba(var(--accent-amber), 0.8) 100%
+  );
+  box-shadow:
+    0 0 30px rgba(var(--accent-amber), 0.5),
+    0 6px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+  animation: shimmer 1.5s ease-in-out;
+}
+
+/* Corner decorations for technical feel */
+.corner-accent::before,
+.corner-accent::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(var(--accent-teal), 0.4);
+}
+
+.corner-accent::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-accent::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Status indicator pulse */
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+.status-indicator {
+  animation: status-pulse 2s ease-in-out infinite;
 }
