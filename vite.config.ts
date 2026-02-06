@@ -14,9 +14,9 @@ export default defineConfig({
       injectRegister: 'auto',
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'オフラインQTH - JCC/JCG検索',
-        short_name: 'QTH検索',
-        description: 'アマチュア無線向けオフライン対応JCC/JCG検索ツール',
+        name: 'SOTA Activator Map - Offline SOTA Summit Finder',
+        short_name: 'SOTA Map',
+        description: 'Offline map for SOTA activators with worldwide summit database',
         theme_color: '#2196F3',
         background_color: '#ffffff',
         display: 'standalone',
