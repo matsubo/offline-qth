@@ -72,7 +72,7 @@ export function useGeolocation(locationData: LocationData | null) {
                 setStatus('status.fetchingDetails')
 
                 // SOTA 山頂を非同期で取得
-                findNearbySotaSummits(lat, lon, sotaData, 10).then(summits => {
+                findNearbySotaSummits(lat, lon, sotaData, 20).then(summits => {
                   initialData.sotaSummits = summits
                   setLocation({ ...initialData })
                 }).catch(err => {

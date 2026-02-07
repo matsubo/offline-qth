@@ -70,7 +70,7 @@ function App() {
 
     // Fetch summits near clicked location
     const { findNearbySotaSummits } = await import('./utils/api')
-    const summits = await findNearbySotaSummits(lat, lon, null, 10)
+    const summits = await findNearbySotaSummits(lat, lon, null, 20)
 
     // Override summits with clicked location results
     setOverrideSummits(summits)
