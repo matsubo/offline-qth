@@ -28,6 +28,7 @@
     "gridLocator": "グリッドロケーター",
     "jcc": "JCC",
     "jcg": "JCG",
+    "callArea": "コールエリア",
     "accuracy": "測位精度"
   },
   "info": {
@@ -45,8 +46,7 @@
     "blog": "Blog",
     "discord": "Discord",
     "lastUpdated": "更新日: {{date}}",
-    "jccJcgData": "JCC/JCG: {{count}}件",
-    "sotaData": "SOTA山頂: {{count}}座"
+    "jccJcgData": "JCC/JCG: {{count}}件"
   },
   "elevation": {
     "gps": "{{value}}m (GPS)",
@@ -59,20 +59,6 @@
     "failed": "取得失敗",
     "estimated": "{{value}} (推定)"
   },
-  "sota": {
-    "nearby": "最寄りのSOTA山頂",
-    "reference": "SOTA参照番号",
-    "name": "山名",
-    "altitude": "標高",
-    "points": "ポイント",
-    "distance": "距離",
-    "noSummits": "SOTA山頂情報がありません",
-    "activationZone": "OK",
-    "bearing": "方位",
-    "verticalDistance": "山頂との標高差",
-    "rangeQuestion": "範囲内か？",
-    "outOfRange": "NG"
-  },
   "help": {
     "title": "使い方・よくある質問",
     "backToHome": "ホームに戻る",
@@ -80,7 +66,7 @@
       "title": "オフラインで動作する仕組み",
       "pwa": "このアプリはPWA（Progressive Web App）です。初回アクセス時にすべてのファイルをデバイスにキャッシュするため、以降はインターネット接続なしで使用できます。",
       "cache": "初回アクセス時にHTML、CSS、JavaScriptなどのファイルをService Workerがキャッシュします",
-      "data": "JCC/JCG/SOTAのデータファイルはローカルに保存され、オフラインでも検索できます",
+      "data": "JCC/JCGのデータファイルはローカルに保存され、オフラインでも検索できます",
       "gps": "GPS（位置情報）はスマートフォンのハードウェア機能なので、インターネット接続なしでも動作します"
     },
     "accuracy": {
@@ -88,13 +74,12 @@
       "gpsLimits": "GPS精度は通常5-10m程度の誤差があります。以下の要因で精度が低下する場合があります。",
       "obstacles": "建物、山、木々などの障害物により、GPS信号が遮られると精度が低下します",
       "agps": "A-GPS（ネットワークアシスト機能）がオフライン時には使えないため、初回の位置情報取得に時間がかかる場合があります",
-      "estimation": "JCC/JCG/SOTAはローカルデータから最近傍検索で推定しています"
+      "estimation": "JCC/JCGはローカルデータから最近傍検索で推定しています"
     },
     "data": {
       "title": "データの精度",
-      "region": "このアプリは日本国内のみ対応しています。JCC/JCG/SOTAすべて日本国内のデータのみを含みます。",
+      "region": "このアプリは日本国内のみ対応しています。JCC/JCGすべて日本国内のデータのみを含みます。",
       "jccJcg": "市区町村の代表地点（役場など）の座標から計算しています。市区町村の境界付近では、隣接する市区町村のJCC/JCGが表示される場合があります。",
-      "sota": "SOTA公式データベースから取得した日本国内の山頂情報（{{count}}山頂）を使用しています。最寄りの山頂（上位3件）を距離順に表示します。",
       "elevation": "オンライン時は国土地理院APIで正確な標高を取得します。オフライン時は「取得不可」と表示されます。",
       "addressTitle": "住所",
       "address": "オンライン時はOpenStreetMap APIで正確な住所を取得します。オフライン時はローカルデータから推定し「(推定)」と表示されます。"

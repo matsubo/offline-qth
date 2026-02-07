@@ -1,12 +1,11 @@
-import { RefreshCw, Github, Languages, HelpCircle, Navigation, Mountain, BookOpen, MessageCircle, MapPin, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { RefreshCw, Github, Languages, HelpCircle, BookOpen, MessageCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useLocationData } from './hooks/useLocationData'
 import { useGeolocation } from './hooks/useGeolocation'
 import { cn } from './lib/utils'
 import { useState, useEffect } from 'react'
-import { trackLanguageChange, trackSotaSummitView } from './utils/analytics'
-import { LocationMap } from './components/LocationMap'
+import { trackLanguageChange } from './utils/analytics'
 
 function App() {
   const { t, i18n } = useTranslation()
@@ -14,10 +13,7 @@ function App() {
   const { status, location, isOnline, refetch } = useGeolocation(locationData)
 
   const [jccJcgCount, setJccJcgCount] = useState<number | null>(null)
-  const [sotaCount, setSotaCount] = useState<number | null>(null)
   const [locationDataLastUpdate, setLocationDataLastUpdate] = useState<string | null>(null)
-  const [sotaDataLastUpdate, setSotaDataLastUpdate] = useState<string | null>(null)
-  const [showMap, setShowMap] = useState<boolean>(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,29 +22,12 @@ function App() {
         const locationJson = await locationResponse.json()
         setJccJcgCount(locationJson.locations.length)
         setLocationDataLastUpdate(locationJson.lastUpdate)
-
-        const sotaResponse = await fetch('/offline-qth/data/sota-data.json')
-        const sotaJson = await sotaResponse.json()
-        setSotaCount(sotaJson.summits.length)
-        setSotaDataLastUpdate(sotaJson.lastUpdate)
       } catch (error) {
         console.error("Failed to fetch data:", error)
       }
     }
     fetchData()
   }, [])
-
-  // Track SOTA summit view
-  useEffect(() => {
-    if (location && location.sotaSummits && location.sotaSummits.length > 0) {
-      const nearestSummit = location.sotaSummits[0]
-      trackSotaSummitView(
-        location.sotaSummits.length,
-        nearestSummit.ref,
-        nearestSummit.distance
-      )
-    }
-  }, [location])
 
   const toggleLanguage = () => {
     const currentLang = i18n.language
@@ -62,29 +41,29 @@ function App() {
   return (
     <div className="min-h-screen p-4 sm:p-6 md:p-8 relative z-10">
       <div className="mx-auto max-w-4xl">
-        <header className="mb-8 animate-fade-in">
-          <div className="card-technical rounded-none border-l-4 border-l-amber-500 p-5 corner-accent">
+        <header className="mb-4 animate-fade-in">
+          <div className="card-technical rounded-none border-l-4 border-l-amber-500 p-3 corner-accent">
             <div className="flex justify-between items-center">
               <div>
-                <div className="text-xs font-mono-data glow-teal mb-1 tracking-wider">SYSTEM_ID: QTH-LOCATOR-v{__APP_VERSION__}</div>
-                <h1 className="text-4xl md:text-5xl font-display glow-amber">
+                <div className="text-[10px] font-mono-data glow-teal mb-0.5 tracking-wider">QTH-LOCATOR-v{__APP_VERSION__}</div>
+                <h1 className="text-2xl md:text-3xl font-display glow-amber">
                   OFFLINE QTH
                 </h1>
-                <div className="text-xs font-mono text-teal-400/60 mt-1">GPS // JCC/JCG // GRID LOCATOR // SOTA</div>
+                <div className="text-[10px] font-mono text-teal-400/60 mt-0.5">GPS // CALL AREA // JCC/JCG // GRID LOCATOR</div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Link
                   to="/help"
-                  className="p-2.5 rounded border border-teal-500/30 bg-black/30 hover:bg-teal-500/10 hover:border-teal-500/60 transition-all"
+                  className="p-2 rounded border border-teal-500/30 bg-black/30 hover:bg-teal-500/10 hover:border-teal-500/60 transition-all"
                 >
-                  <HelpCircle className="w-5 h-5 text-teal-400" />
+                  <HelpCircle className="w-4 h-4 text-teal-400" />
                 </Link>
                 <button
                   onClick={toggleLanguage}
-                  className="p-2.5 rounded border border-teal-500/30 bg-black/30 hover:bg-teal-500/10 hover:border-teal-500/60 transition-all"
+                  className="p-2 rounded border border-teal-500/30 bg-black/30 hover:bg-teal-500/10 hover:border-teal-500/60 transition-all"
                   aria-label="Toggle language"
                 >
-                  <Languages className="w-5 h-5 text-teal-400" />
+                  <Languages className="w-4 h-4 text-teal-400" />
                 </button>
               </div>
             </div>
@@ -138,114 +117,12 @@ function App() {
               {/* Amateur Radio Data Section */}
               <div className="px-5 py-4 border-l-4 border-l-amber-500">
                 <div className="text-[10px] font-mono-data glow-amber tracking-wider mb-3">[ AMATEUR RADIO DATA ]</div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight />
+                  <ResultItem label={t('label.callArea')} value={location.callArea !== null ? `JA${location.callArea}` : '---'} highlight />
                   <ResultItem label={t('label.jcc')} value={location.jcc} highlight />
                   <ResultItem label={t('label.jcg')} value={location.jcg} highlight />
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Map Section */}
-          {location && (
-            <div className="animate-fade-in space-y-3">
-              <button
-                onClick={() => setShowMap(!showMap)}
-                className="w-full card-technical rounded-none p-4 border-l-4 border-l-blue-500 flex items-center justify-between hover:bg-white/5 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-6 h-6 text-blue-400" />
-                  <h2 className="font-display text-xl text-blue-400 tracking-wider">
-                    MAP VIEW
-                  </h2>
-                </div>
-                {showMap ? <ChevronUp className="w-5 h-5 text-blue-400" /> : <ChevronDown className="w-5 h-5 text-blue-400" />}
-              </button>
-
-              {showMap && (
-                <LocationMap
-                  latitude={location.latRaw}
-                  longitude={location.lonRaw}
-                  sotaSummits={location.sotaSummits}
-                  isOnline={isOnline}
-                />
-              )}
-            </div>
-          )}
-
-          {location && location.sotaSummits && location.sotaSummits.length > 0 && (
-            <div className="animate-fade-in space-y-3">
-              <div className="card-technical rounded-none p-3 border-l-4 border-l-green-500">
-                <h2 className="font-display text-lg glow-green flex items-center gap-2 tracking-wider">
-                  <Mountain className="w-5 h-5" />
-                  {t('sota.nearby')} ({location.sotaSummits.length})
-                </h2>
-              </div>
-
-              <div className="card-technical rounded-none overflow-hidden border-l-4 border-l-teal-500">
-                {/* Table Header */}
-                <div className="grid grid-cols-10 gap-2 px-3 py-2 bg-black/40 border-b border-teal-500/20 text-[10px] font-mono-data text-teal-400/60 tracking-wider">
-                  <div className="col-span-1">#</div>
-                  <div className="col-span-3">REF / NAME</div>
-                  <div className="col-span-2">DISTANCE</div>
-                  <div className="col-span-2">BEARING</div>
-                  <div className="col-span-2">ALT / PTS</div>
-                </div>
-
-                {/* Summit Rows */}
-                {location.sotaSummits.map((summit, index) => (
-                  <div
-                    key={summit.ref}
-                    className={cn(
-                      "grid grid-cols-10 gap-2 px-3 py-2.5 border-b border-teal-500/10 hover:bg-teal-500/5 transition-colors group cursor-pointer",
-                      index % 2 === 0 ? "bg-black/20" : "bg-black/10"
-                    )}
-                    onClick={() => isOnline && window.open(`https://www.sotamaps.org/index.php?smt=${summit.ref}`, '_blank')}
-                  >
-                    {/* Number */}
-                    <div className="col-span-1 flex items-center">
-                      <span className="font-mono-data text-teal-400 text-sm">{index + 1}</span>
-                    </div>
-
-                    {/* Reference & Name */}
-                    <div className="col-span-3 flex flex-col justify-center">
-                      <div className="font-mono-data text-amber-400 text-sm tracking-wide flex items-center gap-1.5">
-                        {summit.ref}
-                        {isOnline && (
-                          <ExternalLink className="w-3 h-3 text-teal-400/50 group-hover:text-teal-400 transition-colors" />
-                        )}
-                      </div>
-                      <div className="text-teal-100/80 text-xs truncate">
-                        {i18n.language === 'ja' ? summit.name : summit.nameEn}
-                      </div>
-                    </div>
-
-                    {/* Distance */}
-                    <div className="col-span-2 flex items-center">
-                      <span className="font-mono-data text-amber-300 text-sm">
-                        {summit.distance < 1000
-                          ? `${Math.round(summit.distance)}m`
-                          : `${(summit.distance / 1000).toFixed(1)}km`
-                        }
-                      </span>
-                    </div>
-
-                    {/* Bearing */}
-                    <div className="col-span-2 flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-full border border-teal-500/40 flex items-center justify-center bg-black/40">
-                        <Navigation className="w-3 h-3 text-teal-400" style={{ transform: `rotate(${summit.bearing}deg)` }} />
-                      </div>
-                      <span className="font-mono-data text-teal-300 text-xs">{summit.cardinalBearing}</span>
-                    </div>
-
-                    {/* Altitude & Points */}
-                    <div className="col-span-2 flex flex-col justify-center text-xs">
-                      <div className="text-teal-100/80">{summit.altitude}m</div>
-                      <div className="text-teal-400/60">{summit.points} pts</div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           )}
@@ -322,11 +199,11 @@ function App() {
               {/* Database Stats */}
               <div className="text-center border-t border-teal-500/10 pt-3">
                 <div className="text-[9px] font-mono-data text-teal-500/50 tracking-wider">
-                  {jccJcgCount && sotaCount && (
-                    <span>DATABASE: {t('footer.jccJcgData', { count: jccJcgCount })} / {t('footer.sotaData', { count: sotaCount })}</span>
+                  {jccJcgCount && (
+                    <span>DATABASE: {t('footer.jccJcgData', { count: jccJcgCount })}</span>
                   )}
-                  {(locationDataLastUpdate || sotaDataLastUpdate) && (
-                    <span> {'// '}{t('footer.lastUpdated', { date: locationDataLastUpdate || sotaDataLastUpdate })}</span>
+                  {locationDataLastUpdate && (
+                    <span> {'// '}{t('footer.lastUpdated', { date: locationDataLastUpdate })}</span>
                   )}
                 </div>
               </div>

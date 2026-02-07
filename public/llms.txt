@@ -1,7 +1,7 @@
 # Offline QTH - JCC/JCG Finder
 
 ## Project Overview
-Offline QTH is a Progressive Web App (PWA) for amateur radio operators in Japan. It helps users find their QTH information (JCC/JCG codes, grid locator, and nearby SOTA summits) using GPS location data. The app works completely offline after the first visit.
+Offline QTH is a Progressive Web App (PWA) for amateur radio operators in Japan. It helps users find their QTH information (JCC/JCG codes, grid locator) using GPS location data. The app works completely offline after the first visit.
 
 **Live Demo:** https://matsubo.github.io/offline-qth/
 
@@ -10,15 +10,13 @@ Amateur radio operators in Japan who need to quickly find:
 - JCC (Japan Century City) codes
 - JCG (Japan Century Gun) codes
 - Grid locator (Maidenhead 6-digit)
-- Nearby SOTA (Summits on the Air) summits with distance and bearing
 - Elevation and accurate address information
 
 ## Key Features
-- **Japan-only support**: All data (JCC/JCG/SOTA) is for Japan only
+- **Japan-only support**: All data (JCC/JCG) is for Japan only
 - **Offline-first**: Works without internet after initial cache
 - **PWA**: Can be installed on home screen as native app
 - **GPS-based**: Auto-detects location and shows relevant information
-- **SOTA support**: Shows nearest 3 SOTA summits with distance, bearing, and activation zone status
 - **Grid locator**: Auto-calculates Maidenhead locator (6-digit)
 - **Elevation**: Uses Japan GSI API for accurate elevation (online mode)
 - **Accurate address**: Uses OpenStreetMap API for prefecture/city (online mode)
@@ -65,8 +63,7 @@ src/
 │   └── location.ts      # TypeScript types for location data
 ├── hooks/
 │   ├── useGeolocation.ts    # GPS location hook
-│   ├── useLocationData.ts   # JCC/JCG data loader
-│   └── useSotaData.ts       # SOTA data loader
+│   └── useLocationData.ts   # JCC/JCG data loader
 ├── utils/
 │   ├── api.ts           # API calls (elevation, geocoding)
 │   └── coordinate.ts    # Grid locator calculation
@@ -80,8 +77,7 @@ src/
 ```
 public/
 ├── data/
-│   ├── location-data.json   # JCC/JCG location database (1,892 entries)
-│   └── sota-data.json       # SOTA summits database (7,211 summits)
+│   └── location-data.json   # JCC/JCG location database (1,892 entries)
 ├── locales/
 │   ├── ja/translation.json  # Japanese translations
 │   └── en/translation.json  # English translations
@@ -112,29 +108,6 @@ public/
 ```
 **Total entries**: 1,892 municipalities
 
-### sota-data.json
-```json
-{
-  "version": "1.0.0",
-  "lastUpdate": "2026-02-03",
-  "region": "JA/JA5/JA6/JA8",
-  "summits": [
-    {
-      "ref": "JA/AC-001",
-      "name": "Chausuyama",
-      "nameEn": "Chausuyama",
-      "lat": 35.2276,
-      "lon": 137.6555,
-      "altitude": 1415,
-      "points": 8,
-      "activations": 53,
-      "bonus": 3
-    }
-  ]
-}
-```
-**Total summits**: 7,211 Japanese SOTA summits
-
 ## Key Algorithms
 
 ### Grid Locator Calculation (Maidenhead)
@@ -145,10 +118,6 @@ public/
 ### Nearest Location Search
 - Uses Haversine formula to calculate distance
 - Finds nearest JCC/JCG location from GPS coordinates
-- For SOTA: Returns top 3 nearest summits with:
-  - Distance (meters/km)
-  - Bearing (degrees + cardinal direction)
-  - Activation zone check (within 25m vertical distance)
 
 ### Offline Detection
 - Checks `navigator.onLine`

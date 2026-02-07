@@ -12,7 +12,7 @@ The Offline QTH PWA now **caches map tiles** for offline use, but with important
 
 2. **Leaflet Marker Icons** (1 year)
    - Map marker images from CDN
-   - Location markers, SOTA markers, etc.
+   - Location markers, etc.
 
 ### ⚠️ Important Limitations
 
@@ -36,12 +36,12 @@ New area (offline)    → No tiles available ❌
 4. **The app will cache up to 500 tiles** automatically
 5. Now you can use those areas offline!
 
-**Example workflow for SOTA activation:**
+**Example workflow:**
 
 ```bash
-1. Check your activation plan (which mountain?)
+1. Check your operating plan (which area?)
 2. Open app at home with WiFi
-3. Search for that mountain's JCC/JCG area
+3. Navigate to that area's JCC/JCG location
 4. View the map and zoom in/out (loads tiles)
 5. Pan around nearby areas
 6. Go offline → Those tiles are now cached!
@@ -76,14 +76,13 @@ When you're offline and view an area you haven't cached:
 
 - ⚠️ **Warning banner** appears: "OFFLINE - Showing cached tiles only"
 - 🔲 **Gray placeholder** shown for missing tiles
-- 📍 **Markers and data still work** (JCC/JCG/SOTA info)
+- 📍 **Markers and data still work** (JCC/JCG info)
 - 🧭 **Coordinates still accurate** (GPS doesn't need internet)
 
 **You can still:**
 - ✅ See your GPS coordinates
-- ✅ See JCC/JCG/SOTA information
+- ✅ See JCC/JCG information
 - ✅ Calculate grid locator
-- ✅ View nearby summits (with distance/bearing)
 
 **You cannot:**
 - ❌ Load new map tiles
@@ -174,7 +173,7 @@ The map tile caching is configured in `vite.config.ts`:
 **Why 500 tiles?**
 - Balance between storage usage and coverage
 - ~10-20MB of storage (depending on zoom)
-- Covers typical operating area for SOTA activation
+- Covers typical operating area
 
 ### Browser Storage Limits
 
@@ -242,7 +241,7 @@ A: 30 days. After that, they're re-fetched when you go online.
 A: Technically yes, but it would be millions of tiles (~100GB+). Not practical.
 
 **Q: What if I'm in a new area I haven't cached?**
-A: You'll still get GPS coordinates, JCC/JCG, grid locator, and SOTA info. Just no map background.
+A: You'll still get GPS coordinates, JCC/JCG, and grid locator. Just no map background.
 
 **Q: Does this work on iOS?**
 A: Yes! iOS Safari supports PWA caching.

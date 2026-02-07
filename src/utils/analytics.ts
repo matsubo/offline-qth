@@ -72,18 +72,6 @@ export const trackLanguageChange = (fromLang: string, toLang: string) => {
 }
 
 /**
- * Track SOTA summit view
- */
-export const trackSotaSummitView = (summitCount: number, nearestSummitRef: string, nearestDistance: number) => {
-  pushToDataLayer({
-    event: 'sota_summit_view',
-    summit_count: summitCount,
-    nearest_summit_ref: nearestSummitRef,
-    nearest_distance_meters: nearestDistance
-  })
-}
-
-/**
  * Track offline mode detection
  */
 export const trackOfflineMode = (isOffline: boolean) => {

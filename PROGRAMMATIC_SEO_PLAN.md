@@ -1,8 +1,10 @@
 # Programmatic SEO Implementation Plan for Offline QTH
 
+> **Note**: SOTA feature has been removed from this application. All SOTA-related sections in this document are now deprecated and should be ignored.
+
 ## Executive Summary
 
-Implement a **Locations Playbook** to create 9,000+ SEO-optimized pages targeting amateur radio operators searching for JCC/JCG/SOTA information by location.
+Implement a **Locations Playbook** to create 1,800+ SEO-optimized pages targeting amateur radio operators searching for JCC/JCG information by location.
 
 **Business Goal**: Increase organic traffic from amateur radio operators searching for specific location information, improve PWA installations from search traffic.
 
@@ -16,25 +18,21 @@ Implement a **Locations Playbook** to create 9,000+ SEO-optimized pages targetin
 |---------|----------------|--------|-------------|
 | "JCC [city]" | "JCC 札幌", "JCC 東京" | Medium | Low |
 | "JCG [area]" | "JCG 北海道", "JCG 千代田区" | Medium | Low |
-| "SOTA [mountain]" | "SOTA 茶臼山", "SOTA JA/AC-001" | High | Medium |
 | "[city] アマチュア無線" | "札幌 アマチュア無線 QTH" | Low | Medium |
-| "[mountain] 無線 運用" | "富士山 無線 運用", "高尾山 SOTA" | Medium | High |
 
-**Total Addressable Pages**: 9,000+
+**Total Addressable Pages**: 1,800+
 - 47 prefectures
 - 1,741 cities/municipalities (JCC)
-- 7,211 SOTA summits
 
 ### Competitive Landscape
 
 **Current ranking pages:**
 - JARL official databases (high authority but poor UX)
 - Amateur radio club websites (scattered, outdated)
-- SOTA mapping website (SOTAMaps.org - strong competitor)
 
 **Your Competitive Advantages:**
 1. **Offline functionality** - unique value proposition
-2. **Integrated data** - JCC + JCG + SOTA in one place
+2. **Integrated data** - JCC + JCG in one place
 3. **GPS-based** - automatic location detection
 4. **Mobile-optimized** - PWA for field use
 
@@ -47,7 +45,6 @@ Implement a **Locations Playbook** to create 9,000+ SEO-optimized pages targetin
 ```
 /area/[prefecture-slug]/          ← Prefecture hub pages (47 pages)
 /location/[jcc]/                   ← City/municipality pages (1,741 pages)
-/sota/[sota-ref]/                  ← SOTA summit pages (7,211 pages)
 ```
 
 #### Hub & Spoke Model

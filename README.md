@@ -3,7 +3,7 @@
 [![GitHub Pages](https://img.shields.io/badge/demo-live-success)](https://matsubo.github.io/offline-qth/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-アマチュア無線の山岳運用向けに開発された、**オフラインで動作する**JCC/JCG/SOTA/グリッドロケーター検索PWA（Progressive Web App）です。
+アマチュア無線の山岳運用向けに開発された、**オフラインで動作する**JCC/JCG/グリッドロケーター検索PWA（Progressive Web App）です。
 
 **対応地域：日本国内のみ**
 
@@ -11,11 +11,10 @@
 
 ## 特徴
 
-- **日本国内対応**: JCC/JCG/SOTAすべて日本国内のデータのみ対応
+- **日本国内対応**: JCC/JCGすべて日本国内のデータのみ対応
 - **オフライン対応**: 一度アクセスすればインターネット接続なしで基本動作
 - **PWA対応**: ホーム画面に追加してアプリとして使用可能
 - **位置情報から自動判定**: GPS位置情報からJCC/JCG/グリッドロケーターを自動表示
-- **SOTA山頂情報**: 最寄りのSOTA山頂（最大3件）を距離付きで表示（全7,211山頂対応）
 - **グリッドロケーター**: Maidenhead Locator System (6桁) を自動計算
 - **標高表示**: 国土地理院APIで正確な標高を取得（オンライン時）
 - **正確な住所**: OpenStreetMap APIで都道府県・市区町村を取得（オンライン時）
@@ -39,7 +38,6 @@
    - グリッドロケーター（Maidenhead 6桁）
    - JCC（Japan Century City）
    - JCG（Japan Century Gun）
-   - **SOTA山頂情報**（最寄りの山頂3件、距離・標高・ポイント付き）
 
 ### ホーム画面に追加（推奨）
 
@@ -168,7 +166,7 @@ JCC/JCGデータは `data/location-data.json` に格納されています。
 --bg-panel: rgb(18, 24, 36)          /* パネル背景 */
 --accent-amber: rgb(255, 169, 51)    /* アンバー（主要アクセント） */
 --accent-teal: rgb(51, 204, 204)     /* ティール（グリッド線・ラベル） */
---accent-green: rgb(102, 255, 153)   /* グリーン（ステータス・SOTA） */
+--accent-green: rgb(102, 255, 153)   /* グリーン（ステータス） */
 ```
 
 **色の使い分け:**

@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { LocationData, QTHInfo } from '../types/location'
-import { getElevation, reverseGeocode, findLocationInfo, findJccJcgByCity, findNearbySotaSummits } from '../utils/api'
-import { convertToDMS, calculateGridLocator } from '../utils/coordinate'
-import { useSotaData } from './useSotaData'
+import { getElevation, reverseGeocode, findLocationInfo, findJccJcgByCity } from '../utils/api'
+import { convertToDMS, calculateGridLocator, getCallArea } from '../utils/coordinate'
 import { trackLocationFetchSuccess, trackLocationFetchError, trackOfflineMode } from '../utils/analytics'
 
 export function useGeolocation(locationData: LocationData | null) {
@@ -10,7 +9,6 @@ export function useGeolocation(locationData: LocationData | null) {
   const [location, setLocation] = useState<QTHInfo | null>(null)
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [error, setError] = useState<string | null>(null)
-  const sotaData = useSotaData() // SOTAデータを読み込み
 
   // オンライン/オフライン状態の監視
   useEffect(() => {
@@ -65,7 +63,7 @@ export function useGeolocation(locationData: LocationData | null) {
                   city: 'location.fetching',
                   jcc: 'location.fetching',
                   jcg: 'location.fetching',
-                  sotaSummits: findNearbySotaSummits(lat, lon, sotaData, 10)
+                  callArea: null
                 }
         
                 setLocation(initialData)
@@ -101,6 +99,9 @@ export function useGeolocation(locationData: LocationData | null) {
                       const jccJcgData = findJccJcgByCity(geoData.city, locationData)
                       initialData.jcc = jccJcgData.jcc
                       initialData.jcg = jccJcgData.jcg
+
+                      // コールエリアを取得
+                      initialData.callArea = getCallArea(geoData.prefecture)
                     } else {
                       // APIが空の結果を返した場合、ローカルデータにフォールバック
                       const locationInfo = findLocationInfo(lat, lon, locationData)
@@ -108,6 +109,9 @@ export function useGeolocation(locationData: LocationData | null) {
                       initialData.city = locationInfo.city
                       initialData.jcc = locationInfo.jcc
                       initialData.jcg = locationInfo.jcg
+
+                      // コールエリアを取得
+                      initialData.callArea = getCallArea(locationInfo.prefecture)
                     }
                   } catch (err) {
                     console.error('逆ジオコーディングエラー:', err)
@@ -117,6 +121,9 @@ export function useGeolocation(locationData: LocationData | null) {
                     initialData.city = locationInfo.city
                     initialData.jcc = locationInfo.jcc
                     initialData.jcg = locationInfo.jcg
+
+                    // コールエリアを取得
+                    initialData.callArea = getCallArea(locationInfo.prefecture)
                   }
                 } else {
                   // オフラインの場合
@@ -126,39 +133,12 @@ export function useGeolocation(locationData: LocationData | null) {
                   initialData.jcc = locationInfo.jcc
                   initialData.jcg = locationInfo.jcg
                   initialData.elevation = 'elevation.unavailable'
+
+                  // コールエリアを取得
+                  initialData.callArea = getCallArea(locationInfo.prefecture)
                 }
-        
-                        // SOTA アクティベーションゾーン判定
-        
-                        if (initialData.sotaSummits) {
-        
-                          initialData.sotaSummits.forEach(summit => {
-        
-                            if (currentElevation !== null) {
-        
-                              const verticalDistance = currentElevation - summit.altitude
-        
-                              summit.verticalDistance = verticalDistance
-        
-                              // 標高差25m以内（下方向）、かつ水平距離100m以内
-        
-                              summit.isActivationZone = verticalDistance <= 25 && verticalDistance >= -25 && summit.distance <= 100
-        
-                            } else {
-        
-                              summit.verticalDistance = null
-        
-                              summit.isActivationZone = false
-        
-                            }
-        
-                          })
-        
-                        }
-        
-                
-        
-                        setLocation({ ...initialData })
+
+                setLocation({ ...initialData })
 
                         setStatus(navigator.onLine ? 'status.success' : 'status.offline')
 
@@ -204,7 +184,7 @@ export function useGeolocation(locationData: LocationData | null) {
         maximumAge: 300000 // 5分間はキャッシュを使用（オフライン対応）
       }
     )
-  }, [locationData, sotaData])
+  }, [locationData])
 
   // 初回自動取得を削除（ユーザージェスチャーが必要なため）
   // ユーザーが「Refetch」ボタンをクリックした時のみ取得する

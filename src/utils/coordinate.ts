@@ -114,3 +114,49 @@ export function bearingToCardinal(bearing: number): string {
   const index = Math.round(bearing / 45) % 8;
   return directions[index];
 }
+
+/**
+ * 都道府県名から日本のコールエリア（JA1-JA0）を取得する
+ * @param prefecture 都道府県名
+ * @returns コールエリア番号 (1-8, 0) または null
+ */
+export function getCallArea(prefecture: string): number | null {
+  // エリア1: 関東（JA1）
+  const area1 = ['東京都', '神奈川県', '千葉県', '埼玉県', '茨城県', '栃木県', '群馬県', '山梨県', '長野県', '新潟県'];
+
+  // エリア2: 東海（JA2）
+  const area2 = ['愛知県', '静岡県', '岐阜県', '三重県'];
+
+  // エリア3: 近畿（JA3）
+  const area3 = ['大阪府', '京都府', '兵庫県', '奈良県', '和歌山県', '滋賀県'];
+
+  // エリア4: 中国（JA4）
+  const area4 = ['広島県', '岡山県', '島根県', '鳥取県', '山口県'];
+
+  // エリア5: 四国（JA5）
+  const area5 = ['香川県', '徳島県', '愛媛県', '高知県'];
+
+  // エリア6: 九州（JA6）- 沖縄を除く
+  const area6 = ['福岡県', '佐賀県', '長崎県', '大分県', '熊本県', '宮崎県', '鹿児島県'];
+
+  // エリア7: 東北（JA7）
+  const area7 = ['宮城県', '福島県', '岩手県', '青森県', '秋田県', '山形県'];
+
+  // エリア8: 北海道（JA8）
+  const area8 = ['北海道'];
+
+  // エリア0: 沖縄（JA0）
+  const area0 = ['沖縄県'];
+
+  if (area1.includes(prefecture)) return 1;
+  if (area2.includes(prefecture)) return 2;
+  if (area3.includes(prefecture)) return 3;
+  if (area4.includes(prefecture)) return 4;
+  if (area5.includes(prefecture)) return 5;
+  if (area6.includes(prefecture)) return 6;
+  if (area7.includes(prefecture)) return 7;
+  if (area8.includes(prefecture)) return 8;
+  if (area0.includes(prefecture)) return 0;
+
+  return null;
+}
