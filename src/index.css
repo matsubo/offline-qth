@@ -410,7 +410,7 @@ body::after {
   display: flex;
   gap: 2px;
   align-items: flex-end;
-  height: 24px;
+  height: 18px;
 }
 
 .signal-bar {

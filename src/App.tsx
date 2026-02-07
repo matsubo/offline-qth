@@ -77,70 +77,61 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen p-3 sm:p-5 md:p-6 relative z-10">
+    <div className="min-h-screen p-3 sm:p-4 md:p-5 relative z-10">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-6 animate-fade-in">
-          {/* Main control panel header */}
-          <div className="radio-panel rounded-sm p-5 relative overflow-hidden">
-            {/* TX indicator LED */}
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <div className="tx-indicator"></div>
-              <span className="text-[10px] font-mono-data text-teal-300 tracking-wider">ON AIR</span>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {/* Frequency display style title */}
-              <div className="flex items-center gap-3">
-                <div className="freq-display text-[11px]">
-                  OFFLINE_v{__APP_VERSION__}
+        <header className="mb-4 animate-fade-in">
+          {/* Compact control panel header */}
+          <div className="radio-panel rounded-sm p-3 relative overflow-hidden">
+            <div className="flex items-center justify-between gap-4">
+              {/* Left: Title and version */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="freq-display text-[9px] px-2 py-0.5">
+                    v{__APP_VERSION__}
+                  </div>
+                  <div className="tx-indicator"></div>
                 </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-teal-500/50 to-transparent"></div>
-              </div>
-
-              {/* Main title with VFD display effect */}
-              <div>
-                <h1 className="text-3xl md:text-5xl font-radio-dial vfd-display leading-tight">
+                <h1 className="text-2xl md:text-3xl font-radio-dial vfd-display leading-none">
                   OFFLINE SOTA
                 </h1>
-                <h2 className="text-xl md:text-2xl font-display text-amber-400 mt-1 tracking-wider" style={{textShadow: '0 0 10px rgba(255,185,40,0.5)'}}>
+                <h2 className="text-sm md:text-base font-display text-amber-400 tracking-wider" style={{textShadow: '0 0 8px rgba(255,185,40,0.4)'}}>
                   SUMMIT FINDER
                 </h2>
               </div>
 
-              {/* Signal strength meter */}
-              <div className="flex items-center gap-3 mt-2">
-                <div className="signal-meter w-32">
+              {/* Center: Signal meter */}
+              <div className="hidden sm:flex items-center gap-2">
+                <div className="signal-meter w-20">
                   <div className="signal-bar"></div>
                   <div className="signal-bar"></div>
                   <div className="signal-bar"></div>
                   <div className="signal-bar"></div>
                   <div className="signal-bar"></div>
                 </div>
-                <div className="text-[9px] font-mono-data text-teal-400/70 tracking-widest">
-                  SIGNAL: 179.5K PEAKS
+                <div className="text-[8px] font-mono-data text-teal-400/70 tracking-widest whitespace-nowrap">
+                  179.5K
                 </div>
               </div>
 
-              {/* Control buttons row */}
-              <div className="flex items-center gap-2 mt-3">
+              {/* Right: Controls */}
+              <div className="flex items-center gap-1.5">
                 <Link
                   to="/help"
-                  className="p-2 rounded border border-teal-500/40 bg-black/40 hover:bg-teal-500/20 hover:border-teal-500/60 transition-all"
+                  className="p-1.5 rounded border border-teal-500/40 bg-black/40 hover:bg-teal-500/20 transition-all"
                 >
-                  <HelpCircle className="w-4 h-4 text-teal-400" />
+                  <HelpCircle className="w-3.5 h-3.5 text-teal-400" />
                 </Link>
                 <button
                   onClick={toggleLanguage}
-                  className="p-2 rounded border border-teal-500/40 bg-black/40 hover:bg-teal-500/20 hover:border-teal-500/60 transition-all"
+                  className="p-1.5 rounded border border-teal-500/40 bg-black/40 hover:bg-teal-500/20 transition-all"
                   aria-label="Toggle language"
                 >
-                  <Languages className="w-4 h-4 text-teal-400" />
+                  <Languages className="w-3.5 h-3.5 text-teal-400" />
                 </button>
-                <div className="flex-1"></div>
                 {isOnline && (
-                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30">
-                    <div className="w-2 h-2 rounded-full bg-green-400 status-indicator"></div>
-                    <span className="text-[10px] font-mono-data text-green-400 tracking-wider">RX</span>
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/30">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 status-indicator"></div>
+                    <span className="text-[8px] font-mono-data text-green-400 tracking-wider">RX</span>
                   </div>
                 )}
               </div>
