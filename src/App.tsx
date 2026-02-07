@@ -153,11 +153,10 @@ function App() {
           {/* Tuning button */}
           <button
             onClick={refetch}
-            className="w-full radio-btn font-radio-dial text-base py-4 px-8 rounded-sm flex items-center justify-center gap-3 animate-fade-in relative overflow-hidden group"
+            className="w-full radio-btn font-radio-dial text-base py-4 px-8 rounded-sm flex items-center justify-center gap-3 animate-fade-in"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-            <RefreshCw className="w-5 h-5 relative z-10" />
-            <span className="tracking-widest relative z-10">{t('button.refetch')}</span>
+            <RefreshCw className="w-5 h-5" />
+            <span className="tracking-widest">{t('button.refetch')}</span>
           </button>
 
           {location && (
