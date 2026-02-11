@@ -36,10 +36,12 @@ export async function reverseGeocode(lat: number, lon: number): Promise<Geocodin
       const addr = data.address
       const prefecture = addr.state || addr.province || ''
       const city = addr.city || addr.town || addr.village || addr.municipality || ''
+      const cityDistrict = addr.city_district || ''
 
       return {
         prefecture,
         city,
+        cityDistrict,
         fullAddress: data.display_name
       }
     }
