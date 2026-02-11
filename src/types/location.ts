@@ -31,5 +31,6 @@ export interface QTHInfo {
 export interface GeocodingResult {
   prefecture: string
   city: string
+  cityDistrict?: string
   fullAddress?: string
 }

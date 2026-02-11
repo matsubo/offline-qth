@@ -92,11 +92,23 @@ export function useGeolocation(locationData: LocationData | null) {
                     const geoData = await reverseGeocode(lat, lon)
                     if (geoData && geoData.prefecture && geoData.city) {
                       // API成功時はそのまま使用
+                      // 政令指定都市の場合、city_district（区名）を結合して検索
+                      const fullCity = geoData.cityDistrict ? `${geoData.city}${geoData.cityDistrict}` : geoData.city
                       initialData.prefecture = geoData.prefecture
-                      initialData.city = geoData.city
+                      initialData.city = fullCity
 
                       // APIで取得した市区町村名からJCC/JCGを検索
-                      const jccJcgData = findJccJcgByCity(geoData.city, locationData)
+                      let jccJcgData = findJccJcgByCity(fullCity, locationData)
+
+                      // 完全一致しない場合、座標ベースのフォールバック
+                      if (jccJcgData.jcc === 'location.unknown') {
+                        const locationInfo = findLocationInfo(lat, lon, locationData)
+                        jccJcgData = { jcc: locationInfo.jcc, jcg: locationInfo.jcg }
+                        // 表示用の市区町村名もローカルデータから取得
+                        if (locationInfo.city !== 'location.unknown') {
+                          initialData.city = locationInfo.city
+                        }
+                      }
                       initialData.jcc = jccJcgData.jcc
                       initialData.jcg = jccJcgData.jcg
 
