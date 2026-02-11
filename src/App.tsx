@@ -1,4 +1,4 @@
-import { RefreshCw, Github, Languages, HelpCircle, BookOpen, MessageCircle, Coffee, Heart } from 'lucide-react'
+import { RefreshCw, Github, Languages, HelpCircle, BookOpen, MessageCircle, Coffee, Heart, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useLocationData } from './hooks/useLocationData'
@@ -98,7 +98,7 @@ function App() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-3">
                     {location.accuracy && <ResultItem label={t('label.accuracy')} value={`±${Math.round(location.accuracy)}m`} />}
-                    <ResultItem label={t('label.elevation')} value={t(location.elevation)} />
+                    <ResultItem label={t('label.elevation')} value={t(location.elevation)} loading={location.elevation === 'location.fetching'} />
                   </div>
                 </div>
               </div>
@@ -108,8 +108,8 @@ function App() {
                 <div className="px-5 py-3 border-l-4 border-l-teal-500 relative z-10">
                   <div className="text-[10px] font-mono-data glow-teal tracking-wider mb-2">[ LOCATION DATA ]</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                    <ResultItem label={t('label.prefecture')} value={location.prefecture} />
-                    <ResultItem label={t('label.city')} value={location.city} />
+                    <ResultItem label={t('label.prefecture')} value={t(location.prefecture)} loading={location.prefecture === 'location.fetching'} />
+                    <ResultItem label={t('label.city')} value={t(location.city)} loading={location.city === 'location.fetching'} />
                   </div>
                 </div>
               </div>
@@ -120,8 +120,8 @@ function App() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight />
                   <ResultItem label={t('label.callArea')} value={location.callArea !== null ? `JA${location.callArea}` : '---'} highlight />
-                  <ResultItem label={t('label.jcc')} value={location.jcc} highlight />
-                  <ResultItem label={t('label.jcg')} value={location.jcg} highlight />
+                  <ResultItem label={t('label.jcc')} value={t(location.jcc)} highlight loading={location.jcc === 'location.fetching'} />
+                  <ResultItem label={t('label.jcg')} value={t(location.jcg)} highlight loading={location.jcg === 'location.fetching'} />
                 </div>
               </div>
             </div>
@@ -260,17 +260,26 @@ interface ResultItemProps {
   label: string
   value: string | null
   highlight?: boolean
+  loading?: boolean
 }
 
-function ResultItem({ label, value, highlight }: ResultItemProps) {
+function ResultItem({ label, value, highlight, loading }: ResultItemProps) {
   const displayValue = value || '---'
+
+  const content = loading ? (
+    <span className="inline-flex items-center gap-1.5">
+      <Loader2 className="w-4 h-4 animate-spin" />
+    </span>
+  ) : (
+    displayValue
+  )
 
   if (highlight) {
     return (
       <div className="data-panel rounded p-3 text-center relative">
         <div className="text-[9px] font-mono-data text-teal-400/60 tracking-wider mb-1.5">{label}</div>
         <div className="font-mono-data text-2xl glow-amber tracking-wider">
-          {displayValue}
+          {content}
         </div>
         {/* Corner accent for highlighted items */}
         <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-amber-500/40"></div>
@@ -283,7 +292,7 @@ function ResultItem({ label, value, highlight }: ResultItemProps) {
     <div className="py-0.5">
       <div className="text-[10px] font-mono-data text-teal-500/60 tracking-wider mb-0.5">{label}</div>
       <div className="font-mono text-base text-teal-100 tracking-wide">
-        {displayValue}
+        {content}
       </div>
     </div>
   )
