@@ -93,12 +93,12 @@ function App() {
                 <div className="px-5 py-3 border-l-4 border-l-green-500">
                   <div className="text-[10px] font-mono-data glow-green tracking-wider mb-2">[ GPS COORDINATES ]</div>
                   <div className="grid grid-cols-2 gap-4">
-                    <ResultItem label={t('label.latitude')} value={location.latitude} />
-                    <ResultItem label={t('label.longitude')} value={location.longitude} />
+                    <ResultItem label={t('label.latitude')} value={location.latitude} loading={status === 'status.fetching'} />
+                    <ResultItem label={t('label.longitude')} value={location.longitude} loading={status === 'status.fetching'} />
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-3">
-                    {location.accuracy && <ResultItem label={t('label.accuracy')} value={`±${Math.round(location.accuracy)}m`} />}
-                    <ResultItem label={t('label.elevation')} value={t(location.elevation)} loading={location.elevation === 'location.fetching'} />
+                    {location.accuracy && <ResultItem label={t('label.accuracy')} value={`±${Math.round(location.accuracy)}m`} loading={status === 'status.fetching'} />}
+                    <ResultItem label={t('label.elevation')} value={t(location.elevation)} loading={location.elevation === 'location.fetching' || status === 'status.fetching'} />
                   </div>
                 </div>
               </div>
@@ -108,8 +108,8 @@ function App() {
                 <div className="px-5 py-3 border-l-4 border-l-teal-500 relative z-10">
                   <div className="text-[10px] font-mono-data glow-teal tracking-wider mb-2">[ LOCATION DATA ]</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                    <ResultItem label={t('label.prefecture')} value={t(location.prefecture)} loading={location.prefecture === 'location.fetching'} />
-                    <ResultItem label={t('label.city')} value={t(location.city)} loading={location.city === 'location.fetching'} />
+                    <ResultItem label={t('label.prefecture')} value={t(location.prefecture)} loading={location.prefecture === 'location.fetching' || status === 'status.fetching'} />
+                    <ResultItem label={t('label.city')} value={t(location.city)} loading={location.city === 'location.fetching' || status === 'status.fetching'} />
                   </div>
                 </div>
               </div>
@@ -118,10 +118,10 @@ function App() {
               <div className="px-5 py-4 border-l-4 border-l-amber-500">
                 <div className="text-[10px] font-mono-data glow-amber tracking-wider mb-3">[ AMATEUR RADIO DATA ]</div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight />
-                  <ResultItem label={t('label.callArea')} value={location.callArea !== null ? `JA${location.callArea}` : '---'} highlight />
-                  <ResultItem label={t('label.jcc')} value={t(location.jcc)} highlight loading={location.jcc === 'location.fetching'} />
-                  <ResultItem label={t('label.jcg')} value={t(location.jcg)} highlight loading={location.jcg === 'location.fetching'} />
+                  <ResultItem label={t('label.gridLocator')} value={location.gridLocator} highlight loading={status === 'status.fetching'} />
+                  <ResultItem label={t('label.callArea')} value={location.callArea !== null ? `JA${location.callArea}` : '---'} highlight loading={status === 'status.fetching'} />
+                  <ResultItem label={t('label.jcc')} value={t(location.jcc)} highlight loading={location.jcc === 'location.fetching' || status === 'status.fetching'} />
+                  <ResultItem label={t('label.jcg')} value={t(location.jcg)} highlight loading={location.jcg === 'location.fetching' || status === 'status.fetching'} />
                 </div>
               </div>
             </div>
