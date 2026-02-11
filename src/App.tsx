@@ -1,4 +1,4 @@
-import { RefreshCw, Github, Languages, HelpCircle, BookOpen, MessageCircle } from 'lucide-react'
+import { RefreshCw, Github, Languages, HelpCircle, BookOpen, MessageCircle, Coffee, Heart } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useLocationData } from './hooks/useLocationData'
@@ -164,36 +164,72 @@ function App() {
               </div>
 
               {/* Links */}
-              <div className="flex items-center justify-center gap-5 border-t border-teal-500/10 pt-3">
-                <a
-                  href="https://je1wfv.teraren.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span className="text-xs font-mono-data">{t('footer.blog')}</span>
-                </a>
-                <div className="w-px h-4 bg-teal-500/20"></div>
-                <a
-                  href="https://discord.gg/Fztt8jwr6A"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span className="text-xs font-mono-data">{t('footer.discord')}</span>
-                </a>
-                <div className="w-px h-4 bg-teal-500/20"></div>
-                <a
-                  href="https://github.com/matsubo/offline-qth"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
-                >
-                  <Github className="w-4 h-4" />
-                  <span className="text-xs font-mono-data">{t('footer.github')}</span>
-                </a>
+              <div className="border-t border-teal-500/10 pt-4 space-y-3">
+                {/* External Resources */}
+                <div>
+                  <div className="text-[9px] font-mono-data text-teal-500/50 tracking-wider mb-2 text-center">
+                    EXTERNAL RESOURCES
+                  </div>
+                  <div className="flex items-center justify-center gap-4">
+                    <a
+                      href="https://je1wfv.teraren.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span className="text-xs font-mono-data">{t('footer.blog')}</span>
+                    </a>
+                    <div className="w-px h-4 bg-teal-500/20"></div>
+                    <a
+                      href="https://discord.gg/Fztt8jwr6A"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span className="text-xs font-mono-data">{t('footer.discord')}</span>
+                    </a>
+                    <div className="w-px h-4 bg-teal-500/20"></div>
+                    <a
+                      href="https://github.com/matsubo/offline-qth"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
+                    >
+                      <Github className="w-4 h-4" />
+                      <span className="text-xs font-mono-data">{t('footer.github')}</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Support / Donation */}
+                <div>
+                  <div className="text-[9px] font-mono-data text-teal-500/50 tracking-wider mb-2 text-center">
+                    SUPPORT
+                  </div>
+                  <div className="flex items-center justify-center gap-4">
+                    <a
+                      href="https://buymeacoffee.com/matsubokkuri"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-amber-400/80 hover:text-amber-300 transition-colors"
+                    >
+                      <Coffee className="w-4 h-4" />
+                      <span className="text-xs font-mono-data">Buy Me a Coffee</span>
+                    </a>
+                    <div className="w-px h-4 bg-teal-500/20"></div>
+                    <a
+                      href="https://github.com/sponsors/matsubo"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-amber-400/80 hover:text-amber-300 transition-colors"
+                    >
+                      <Heart className="w-4 h-4" />
+                      <span className="text-xs font-mono-data">GitHub Sponsors</span>
+                    </a>
+                  </div>
+                </div>
               </div>
 
               {/* Database Stats */}
