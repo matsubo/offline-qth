@@ -52,10 +52,7 @@ export const trackLocationFetchSuccess = (data: {
 /**
  * Track location fetch error
  */
-export const trackLocationFetchError = (
-  errorType: string,
-  errorMessage?: string,
-) => {
+export const trackLocationFetchError = (errorType: string, errorMessage?: string) => {
   pushToDataLayer({
     event: "location_fetch_error",
     error_type: errorType,

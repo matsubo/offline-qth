@@ -38,10 +38,7 @@ test.describe("オフラインQTH アプリケーション", () => {
     await expect(page.locator("text=グリッドロケーター")).toBeVisible();
 
     // グリッドロケーターの値が英数字であることを確認（例：PM95vr）
-    const gridLocator = await page
-      .locator("text=グリッドロケーター")
-      .locator("..")
-      .textContent();
+    const gridLocator = await page.locator("text=グリッドロケーター").locator("..").textContent();
     expect(gridLocator).toMatch(/[A-Z]{2}\d{2}[a-z]{2}/);
   });
 

@@ -56,12 +56,7 @@ export function calculateGridLocator(lat: number, lon: number): string {
  * @param lon2 地点2の経度
  * @returns 距離（メートル）
  */
-export function haversineDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-): number {
+export function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371e3; // 地球の半径（メートル）
   const φ1 = (lat1 * Math.PI) / 180;
   const φ2 = (lat2 * Math.PI) / 180;
@@ -84,21 +79,14 @@ export function haversineDistance(
  * @param lon2 地点2の経度
  * @returns 方位（0-360度）
  */
-export function calculateBearing(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-): number {
+export function calculateBearing(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const φ1 = (lat1 * Math.PI) / 180;
   const φ2 = (lat2 * Math.PI) / 180;
   const λ1 = (lon1 * Math.PI) / 180;
   const λ2 = (lon2 * Math.PI) / 180;
 
   const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
-  const x =
-    Math.cos(φ1) * Math.sin(φ2) -
-    Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
   const θ = Math.atan2(y, x);
   const brng = ((θ * 180) / Math.PI + 360) % 360; // 度数法に変換し、0-360の範囲に正規化
 
@@ -149,15 +137,7 @@ export function getCallArea(prefecture: string): number | null {
   const area5 = ["香川県", "徳島県", "愛媛県", "高知県"];
 
   // エリア6: 九州（JA6）- 沖縄を除く
-  const area6 = [
-    "福岡県",
-    "佐賀県",
-    "長崎県",
-    "大分県",
-    "熊本県",
-    "宮崎県",
-    "鹿児島県",
-  ];
+  const area6 = ["福岡県", "佐賀県", "長崎県", "大分県", "熊本県", "宮崎県", "鹿児島県"];
 
   // エリア7: 東北（JA7）
   const area7 = ["宮城県", "福島県", "岩手県", "青森県", "秋田県", "山形県"];

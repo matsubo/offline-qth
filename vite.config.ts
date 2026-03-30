@@ -77,8 +77,7 @@ export default defineConfig({
           },
           {
             // OpenStreetMap tiles - cache for offline map viewing
-            urlPattern:
-              /^https:\/\/[a-c]\.tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/i,
+            urlPattern: /^https:\/\/[a-c]\.tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/i,
             handler: "CacheFirst",
             options: {
               cacheName: "osm-tiles-cache",
@@ -93,8 +92,7 @@ export default defineConfig({
           },
           {
             // Leaflet marker icons from CDN
-            urlPattern:
-              /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/leaflet\/.*/i,
+            urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/leaflet\/.*/i,
             handler: "CacheFirst",
             options: {
               cacheName: "leaflet-icons-cache",

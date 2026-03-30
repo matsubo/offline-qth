@@ -5,17 +5,8 @@ import {
   trackLocationFetchSuccess,
   trackOfflineMode,
 } from "../utils/analytics";
-import {
-  findJccJcgByCity,
-  findLocationInfo,
-  getElevation,
-  reverseGeocode,
-} from "../utils/api";
-import {
-  calculateGridLocator,
-  convertToDMS,
-  getCallArea,
-} from "../utils/coordinate";
+import { findJccJcgByCity, findLocationInfo, getElevation, reverseGeocode } from "../utils/api";
+import { calculateGridLocator, convertToDMS, getCallArea } from "../utils/coordinate";
 
 export function useGeolocation(locationData: LocationData | null) {
   const [status, setStatus] = useState("status.ready");
@@ -79,9 +70,7 @@ export function useGeolocation(locationData: LocationData | null) {
           setLocation(initialData);
           setStatus("status.fetchingDetails");
 
-          let currentElevation: number | null = altitudeGPS
-            ? Math.round(altitudeGPS)
-            : null;
+          let currentElevation: number | null = altitudeGPS ? Math.round(altitudeGPS) : null;
 
           // オンラインの場合、API で詳細情報を取得
           if (navigator.onLine) {
@@ -102,7 +91,7 @@ export function useGeolocation(locationData: LocationData | null) {
             // 都道府県・市区町村を逆ジオコーディングAPIで取得
             try {
               const geoData = await reverseGeocode(lat, lon);
-              if (geoData && geoData.prefecture && geoData.city) {
+              if (geoData?.prefecture && geoData.city) {
                 // API成功時はそのまま使用
                 // 政令指定都市の場合、city_district（区名）を結合して検索
                 const fullCity = geoData.cityDistrict

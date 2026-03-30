@@ -1,8 +1,4 @@
-import type {
-  GeocodingResult,
-  Location,
-  LocationData,
-} from "../types/location";
+import type { GeocodingResult, Location, LocationData } from "../types/location";
 import { haversineDistance } from "./coordinate";
 
 interface ElevationResponse {
@@ -27,10 +23,7 @@ interface NominatimResponse {
 /**
  * 国土地理院APIで標高を取得
  */
-export async function getElevation(
-  lat: number,
-  lon: number,
-): Promise<number | null> {
+export async function getElevation(lat: number, lon: number): Promise<number | null> {
   try {
     const url = `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${String(lon)}&lat=${String(lat)}&outtype=JSON`;
     const response = await fetch(url);
@@ -48,10 +41,7 @@ export async function getElevation(
 /**
  * 逆ジオコーディング（OpenStreetMap Nominatim）
  */
-export async function reverseGeocode(
-  lat: number,
-  lon: number,
-): Promise<GeocodingResult | null> {
+export async function reverseGeocode(lat: number, lon: number): Promise<GeocodingResult | null> {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${String(lat)}&lon=${String(lon)}&accept-language=ja`;
     const response = await fetch(url, {
@@ -64,8 +54,7 @@ export async function reverseGeocode(
     if (data.address) {
       const addr = data.address;
       const prefecture = addr.state ?? addr.province ?? "";
-      const city =
-        addr.city ?? addr.town ?? addr.village ?? addr.municipality ?? "";
+      const city = addr.city ?? addr.town ?? addr.village ?? addr.municipality ?? "";
       const cityDistrict = addr.city_district ?? "";
 
       return {

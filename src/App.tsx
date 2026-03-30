@@ -23,16 +23,12 @@ function App() {
   const { status, location, isOnline, refetch } = useGeolocation(locationData);
 
   const [jccJcgCount, setJccJcgCount] = useState<number | null>(null);
-  const [locationDataLastUpdate, setLocationDataLastUpdate] = useState<
-    string | null
-  >(null);
+  const [locationDataLastUpdate, setLocationDataLastUpdate] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const locationResponse = await fetch(
-          "/offline-qth/data/location-data.json",
-        );
+        const locationResponse = await fetch("/offline-qth/data/location-data.json");
         const locationJson = (await locationResponse.json()) as {
           locations: unknown[];
           lastUpdate: string;
@@ -65,9 +61,7 @@ function App() {
                 <div className="text-[10px] font-mono-data glow-teal mb-0.5 tracking-wider">
                   QTH-LOCATOR-v{__APP_VERSION__}
                 </div>
-                <h1 className="text-2xl md:text-3xl font-display glow-amber">
-                  OFFLINE QTH
-                </h1>
+                <h1 className="text-2xl md:text-3xl font-display glow-amber">OFFLINE QTH</h1>
                 <div className="text-[10px] font-mono text-teal-400/60 mt-0.5">
                   {"GPS // CALL AREA // JCC/JCG // GRID LOCATOR"}
                 </div>
@@ -145,8 +139,7 @@ function App() {
                       label={t("label.elevation")}
                       value={t(location.elevation)}
                       loading={
-                        location.elevation === "location.fetching" ||
-                        status === "status.fetching"
+                        location.elevation === "location.fetching" || status === "status.fetching"
                       }
                     />
                   </div>
@@ -164,16 +157,14 @@ function App() {
                       label={t("label.prefecture")}
                       value={t(location.prefecture)}
                       loading={
-                        location.prefecture === "location.fetching" ||
-                        status === "status.fetching"
+                        location.prefecture === "location.fetching" || status === "status.fetching"
                       }
                     />
                     <ResultItem
                       label={t("label.city")}
                       value={t(location.city)}
                       loading={
-                        location.city === "location.fetching" ||
-                        status === "status.fetching"
+                        location.city === "location.fetching" || status === "status.fetching"
                       }
                     />
                   </div>
@@ -194,11 +185,7 @@ function App() {
                   />
                   <ResultItem
                     label={t("label.callArea")}
-                    value={
-                      location.callArea !== null
-                        ? `JA${String(location.callArea)}`
-                        : "---"
-                    }
+                    value={location.callArea !== null ? `JA${String(location.callArea)}` : "---"}
                     highlight
                     loading={status === "status.fetching"}
                   />
@@ -206,19 +193,13 @@ function App() {
                     label={t("label.jcc")}
                     value={t(location.jcc)}
                     highlight
-                    loading={
-                      location.jcc === "location.fetching" ||
-                      status === "status.fetching"
-                    }
+                    loading={location.jcc === "location.fetching" || status === "status.fetching"}
                   />
                   <ResultItem
                     label={t("label.jcg")}
                     value={t(location.jcg)}
                     highlight
-                    loading={
-                      location.jcg === "location.fetching" ||
-                      status === "status.fetching"
-                    }
+                    loading={location.jcg === "location.fetching" || status === "status.fetching"}
                   />
                 </div>
               </div>
@@ -235,9 +216,7 @@ function App() {
                   <div
                     className={cn(
                       "w-2 h-2 rounded-full",
-                      isOnline
-                        ? "bg-green-500 status-indicator"
-                        : "bg-orange-500",
+                      isOnline ? "bg-green-500 status-indicator" : "bg-orange-500",
                     )}
                   ></div>
                   <span className="font-mono-data text-xs tracking-wider text-teal-400/80">
@@ -255,9 +234,7 @@ function App() {
                   SYSTEM OPERATOR
                 </div>
                 <div className="text-sm font-mono">
-                  <span className="text-teal-400/60">
-                    {t("footer.createdBy")}
-                  </span>{" "}
+                  <span className="text-teal-400/60">{t("footer.createdBy")}</span>{" "}
                   <a
                     href="https://x.com/je1wfv"
                     target="_blank"
@@ -284,9 +261,7 @@ function App() {
                       className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
                     >
                       <BookOpen className="w-4 h-4" />
-                      <span className="text-xs font-mono-data">
-                        {t("footer.blog")}
-                      </span>
+                      <span className="text-xs font-mono-data">{t("footer.blog")}</span>
                     </a>
                     <div className="w-px h-4 bg-teal-500/20"></div>
                     <a
@@ -296,9 +271,7 @@ function App() {
                       className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      <span className="text-xs font-mono-data">
-                        {t("footer.discord")}
-                      </span>
+                      <span className="text-xs font-mono-data">{t("footer.discord")}</span>
                     </a>
                     <div className="w-px h-4 bg-teal-500/20"></div>
                     <a
@@ -308,9 +281,7 @@ function App() {
                       className="inline-flex items-center gap-1.5 text-teal-500/60 hover:text-teal-400 transition-colors"
                     >
                       <GithubIcon className="w-4 h-4" />
-                      <span className="text-xs font-mono-data">
-                        {t("footer.github")}
-                      </span>
+                      <span className="text-xs font-mono-data">{t("footer.github")}</span>
                     </a>
                   </div>
                 </div>
@@ -328,9 +299,7 @@ function App() {
                       className="inline-flex items-center gap-1.5 text-amber-400/80 hover:text-amber-300 transition-colors"
                     >
                       <Coffee className="w-4 h-4" />
-                      <span className="text-xs font-mono-data">
-                        Buy Me a Coffee
-                      </span>
+                      <span className="text-xs font-mono-data">Buy Me a Coffee</span>
                     </a>
                     <div className="w-px h-4 bg-teal-500/20"></div>
                     <a
@@ -340,9 +309,7 @@ function App() {
                       className="inline-flex items-center gap-1.5 text-amber-400/80 hover:text-amber-300 transition-colors"
                     >
                       <Heart className="w-4 h-4" />
-                      <span className="text-xs font-mono-data">
-                        GitHub Sponsors
-                      </span>
+                      <span className="text-xs font-mono-data">GitHub Sponsors</span>
                     </a>
                   </div>
                 </div>
@@ -352,9 +319,7 @@ function App() {
               <div className="text-center border-t border-teal-500/10 pt-3">
                 <div className="text-[9px] font-mono-data text-teal-500/50 tracking-wider">
                   {jccJcgCount && (
-                    <span>
-                      DATABASE: {t("footer.jccJcgData", { count: jccJcgCount })}
-                    </span>
+                    <span>DATABASE: {t("footer.jccJcgData", { count: jccJcgCount })}</span>
                   )}
                   {locationDataLastUpdate && (
                     <span>
@@ -370,9 +335,7 @@ function App() {
 
               {/* 73 Sign-off */}
               <div className="text-center border-t border-teal-500/10 pt-3">
-                <div className="font-display text-sm glow-green tracking-wider">
-                  73 DE JE1WFV
-                </div>
+                <div className="font-display text-sm glow-green tracking-wider">73 DE JE1WFV</div>
               </div>
             </div>
           </div>
@@ -406,9 +369,7 @@ function ResultItem({ label, value, highlight, loading }: ResultItemProps) {
         <div className="text-[9px] font-mono-data text-teal-400/60 tracking-wider mb-1.5">
           {label}
         </div>
-        <div className="font-mono-data text-2xl glow-amber tracking-wider">
-          {content}
-        </div>
+        <div className="font-mono-data text-2xl glow-amber tracking-wider">{content}</div>
         {/* Corner accent for highlighted items */}
         <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-amber-500/40"></div>
         <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-amber-500/40"></div>
@@ -421,9 +382,7 @@ function ResultItem({ label, value, highlight, loading }: ResultItemProps) {
       <div className="text-[10px] font-mono-data text-teal-500/60 tracking-wider mb-0.5">
         {label}
       </div>
-      <div className="font-mono text-base text-teal-100 tracking-wide">
-        {content}
-      </div>
+      <div className="font-mono text-base text-teal-100 tracking-wide">{content}</div>
     </div>
   );
 }
