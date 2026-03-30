@@ -1,60 +1,62 @@
-import js from '@eslint/js'
-import typescript from '@typescript-eslint/eslint-plugin'
-import typescriptParser from '@typescript-eslint/parser'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
+import js from "@eslint/js";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
 
-export default [
+export default tseslint.config(
   {
     ignores: [
-      'dist/**',
-      '.backup/**',
-      'node_modules/**',
-      'playwright.config.ts',
-      'scripts/**',
-      '**/*.cjs'
-    ]
+      "dist/**",
+      ".backup/**",
+      "node_modules/**",
+      "playwright.config.ts",
+      "vite.config.ts",
+      "e2e/**",
+      "scripts/**",
+      "**/*.cjs",
+    ],
   },
   js.configs.recommended,
+  ...tseslint.configs.strictTypeChecked.map((config) => ({
+    ...config,
+    files: ["**/*.{ts,tsx}"],
+  })),
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
-      parser: typescriptParser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true
-        }
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        fetch: 'readonly',
-        console: 'readonly',
-        setTimeout: 'readonly',
+        window: "readonly",
+        document: "readonly",
+        navigator: "readonly",
+        fetch: "readonly",
+        console: "readonly",
+        setTimeout: "readonly",
         // Vite globals
-        __APP_VERSION__: 'readonly'
-      }
+        __APP_VERSION__: "readonly",
+      },
     },
     plugins: {
-      '@typescript-eslint': typescript,
-      'react': react,
-      'react-hooks': reactHooks
+      react: react,
+      "react-hooks": reactHooks,
     },
     rules: {
-      ...typescript.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'react/react-in-jsx-scope': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
     },
     settings: {
       react: {
-        version: 'detect'
-      }
-    }
-  }
-]
+        version: "detect",
+      },
+    },
+  },
+);

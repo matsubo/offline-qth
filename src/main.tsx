@@ -1,26 +1,30 @@
-import React, { useEffect } from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import App from './App.tsx'
-import { Help } from './pages/Help.tsx'
-import './index.css'
-import 'leaflet/dist/leaflet.css'
-import './i18n'
-import { trackPageView } from './utils/analytics'
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import App from "./App.tsx";
+import { Help } from "./pages/Help.tsx";
+import "./index.css";
+import "./i18n";
+import { trackPageView } from "./utils/analytics";
 
 // Page view tracker component
 function PageViewTracker() {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
-    const pageTitle = location.pathname === '/help' ? 'Help' : 'Home'
-    trackPageView(location.pathname, pageTitle)
-  }, [location])
+    const pageTitle = location.pathname === "/help" ? "Help" : "Home";
+    trackPageView(location.pathname, pageTitle);
+  }, [location]);
 
-  return null
+  return null;
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <BrowserRouter basename="/offline-qth">
       <PageViewTracker />
@@ -30,4 +34,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
-)
+);

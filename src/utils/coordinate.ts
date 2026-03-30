@@ -2,20 +2,20 @@
  * 度分秒（DMS）形式への変換
  */
 export function convertToDMS(decimal: number, isLatitude: boolean): string {
-  const absolute = Math.abs(decimal)
-  const degrees = Math.floor(absolute)
-  const minutesDecimal = (absolute - degrees) * 60
-  const minutes = Math.floor(minutesDecimal)
-  const seconds = ((minutesDecimal - minutes) * 60).toFixed(2)
+  const absolute = Math.abs(decimal);
+  const degrees = Math.floor(absolute);
+  const minutesDecimal = (absolute - degrees) * 60;
+  const minutes = Math.floor(minutesDecimal);
+  const seconds = ((minutesDecimal - minutes) * 60).toFixed(2);
 
-  let direction: string
+  let direction: string;
   if (isLatitude) {
-    direction = decimal >= 0 ? 'N' : 'S'
+    direction = decimal >= 0 ? "N" : "S";
   } else {
-    direction = decimal >= 0 ? 'E' : 'W'
+    direction = decimal >= 0 ? "E" : "W";
   }
 
-  return `${degrees}°${minutes}'${seconds}" ${direction}`
+  return `${String(degrees)}°${String(minutes)}'${seconds}" ${direction}`;
 }
 
 /**
@@ -23,27 +23,27 @@ export function convertToDMS(decimal: number, isLatitude: boolean): string {
  */
 export function calculateGridLocator(lat: number, lon: number): string {
   // 経度を0-360の範囲に変換
-  let adjustedLon = lon + 180
+  let adjustedLon = lon + 180;
   // 緯度を0-180の範囲に変換
-  let adjustedLat = lat + 90
+  let adjustedLat = lat + 90;
 
   // Field (A-R)
-  const fieldLon = String.fromCharCode(65 + Math.floor(adjustedLon / 20))
-  const fieldLat = String.fromCharCode(65 + Math.floor(adjustedLat / 10))
+  const fieldLon = String.fromCharCode(65 + Math.floor(adjustedLon / 20));
+  const fieldLat = String.fromCharCode(65 + Math.floor(adjustedLat / 10));
 
   // Square (0-9)
-  adjustedLon = adjustedLon % 20
-  adjustedLat = adjustedLat % 10
-  const squareLon = Math.floor(adjustedLon / 2)
-  const squareLat = Math.floor(adjustedLat / 1)
+  adjustedLon = adjustedLon % 20;
+  adjustedLat = adjustedLat % 10;
+  const squareLon = Math.floor(adjustedLon / 2);
+  const squareLat = Math.floor(adjustedLat / 1);
 
   // Subsquare (a-x)
-  adjustedLon = (adjustedLon % 2) * 60
-  adjustedLat = (adjustedLat % 1) * 60
-  const subsquareLon = String.fromCharCode(97 + Math.floor(adjustedLon / 5))
-  const subsquareLat = String.fromCharCode(97 + Math.floor(adjustedLat / 2.5))
+  adjustedLon = (adjustedLon % 2) * 60;
+  adjustedLat = (adjustedLat % 1) * 60;
+  const subsquareLon = String.fromCharCode(97 + Math.floor(adjustedLon / 5));
+  const subsquareLat = String.fromCharCode(97 + Math.floor(adjustedLat / 2.5));
 
-  return `${fieldLon}${fieldLat}${squareLon}${squareLat}${subsquareLon}${subsquareLat}`
+  return `${fieldLon}${fieldLat}${String(squareLon)}${String(squareLat)}${subsquareLon}${subsquareLat}`;
 }
 
 /**
@@ -60,7 +60,7 @@ export function haversineDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const R = 6371e3; // 地球の半径（メートル）
   const φ1 = (lat1 * Math.PI) / 180;
@@ -88,7 +88,7 @@ export function calculateBearing(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const φ1 = (lat1 * Math.PI) / 180;
   const φ2 = (lat2 * Math.PI) / 180;
@@ -96,13 +96,14 @@ export function calculateBearing(
   const λ2 = (lon2 * Math.PI) / 180;
 
   const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
-  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+  const x =
+    Math.cos(φ1) * Math.sin(φ2) -
+    Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
   const θ = Math.atan2(y, x);
   const brng = ((θ * 180) / Math.PI + 360) % 360; // 度数法に変換し、0-360の範囲に正規化
 
   return brng;
 }
-
 
 /**
  * 方位（度）を8方位の文字列に変換する
@@ -110,9 +111,9 @@ export function calculateBearing(
  * @returns 8方位の文字列 (N, NE, E, SE, S, SW, W, NW)
  */
 export function bearingToCardinal(bearing: number): string {
-  const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
   const index = Math.round(bearing / 45) % 8;
-  return directions[index];
+  return directions[index] ?? "N";
 }
 
 /**
@@ -122,31 +123,50 @@ export function bearingToCardinal(bearing: number): string {
  */
 export function getCallArea(prefecture: string): number | null {
   // エリア1: 関東（JA1）
-  const area1 = ['東京都', '神奈川県', '千葉県', '埼玉県', '茨城県', '栃木県', '群馬県', '山梨県', '長野県', '新潟県'];
+  const area1 = [
+    "東京都",
+    "神奈川県",
+    "千葉県",
+    "埼玉県",
+    "茨城県",
+    "栃木県",
+    "群馬県",
+    "山梨県",
+    "長野県",
+    "新潟県",
+  ];
 
   // エリア2: 東海（JA2）
-  const area2 = ['愛知県', '静岡県', '岐阜県', '三重県'];
+  const area2 = ["愛知県", "静岡県", "岐阜県", "三重県"];
 
   // エリア3: 近畿（JA3）
-  const area3 = ['大阪府', '京都府', '兵庫県', '奈良県', '和歌山県', '滋賀県'];
+  const area3 = ["大阪府", "京都府", "兵庫県", "奈良県", "和歌山県", "滋賀県"];
 
   // エリア4: 中国（JA4）
-  const area4 = ['広島県', '岡山県', '島根県', '鳥取県', '山口県'];
+  const area4 = ["広島県", "岡山県", "島根県", "鳥取県", "山口県"];
 
   // エリア5: 四国（JA5）
-  const area5 = ['香川県', '徳島県', '愛媛県', '高知県'];
+  const area5 = ["香川県", "徳島県", "愛媛県", "高知県"];
 
   // エリア6: 九州（JA6）- 沖縄を除く
-  const area6 = ['福岡県', '佐賀県', '長崎県', '大分県', '熊本県', '宮崎県', '鹿児島県'];
+  const area6 = [
+    "福岡県",
+    "佐賀県",
+    "長崎県",
+    "大分県",
+    "熊本県",
+    "宮崎県",
+    "鹿児島県",
+  ];
 
   // エリア7: 東北（JA7）
-  const area7 = ['宮城県', '福島県', '岩手県', '青森県', '秋田県', '山形県'];
+  const area7 = ["宮城県", "福島県", "岩手県", "青森県", "秋田県", "山形県"];
 
   // エリア8: 北海道（JA8）
-  const area8 = ['北海道'];
+  const area8 = ["北海道"];
 
   // エリア0: 沖縄（JA0）
-  const area0 = ['沖縄県'];
+  const area0 = ["沖縄県"];
 
   if (area1.includes(prefecture)) return 1;
   if (area2.includes(prefecture)) return 2;

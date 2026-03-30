@@ -1,7 +1,9 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
-import packageJson from './package.json'
+/// <reference types="vitest" />
+
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
+import packageJson from "./package.json";
 
 export default defineConfig({
   define: {
@@ -10,99 +12,106 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
-      includeAssets: ['icon-192.png', 'icon-512.png'],
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      includeAssets: ["icon-192.png", "icon-512.png"],
       manifest: {
-        name: 'オフラインQTH - JCC/JCG検索',
-        short_name: 'QTH検索',
-        description: 'アマチュア無線向けオフライン対応JCC/JCG検索ツール',
-        theme_color: '#2196F3',
-        background_color: '#ffffff',
-        display: 'standalone',
-        orientation: 'portrait',
+        name: "オフラインQTH - JCC/JCG検索",
+        short_name: "QTH検索",
+        description: "アマチュア無線向けオフライン対応JCC/JCG検索ツール",
+        theme_color: "#2196F3",
+        background_color: "#ffffff",
+        display: "standalone",
+        orientation: "portrait",
         icons: [
           {
-            src: 'icon-192.png',
-            sizes: '192x192',
-            type: 'image/png'
+            src: "icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
           },
           {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
+            src: "icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
       },
       workbox: {
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/www\.googletagmanager\.com\/gtm\.js/i,
-            handler: 'StaleWhileRevalidate',
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: 'gtm-cache',
+              cacheName: "gtm-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
-              }
-            }
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+              },
+            },
           },
           {
             urlPattern: /^https:\/\/cyberjapandata2\.gsi\.go\.jp\/.*/i,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'gsi-elevation-cache',
+              cacheName: "gsi-elevation-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
           },
           {
             urlPattern: /^https:\/\/nominatim\.openstreetmap\.org\/.*/i,
-            handler: 'NetworkFirst',
+            handler: "NetworkFirst",
             options: {
-              cacheName: 'osm-geocoding-cache',
+              cacheName: "osm-geocoding-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7
-              }
-            }
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+            },
           },
           {
             // OpenStreetMap tiles - cache for offline map viewing
-            urlPattern: /^https:\/\/[a-c]\.tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/i,
-            handler: 'CacheFirst',
+            urlPattern:
+              /^https:\/\/[a-c]\.tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/i,
+            handler: "CacheFirst",
             options: {
-              cacheName: 'osm-tiles-cache',
+              cacheName: "osm-tiles-cache",
               expiration: {
                 maxEntries: 500, // Cache up to 500 tiles
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
+                statuses: [0, 200],
+              },
+            },
           },
           {
             // Leaflet marker icons from CDN
-            urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/leaflet\/.*/i,
-            handler: 'CacheFirst',
+            urlPattern:
+              /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/leaflet\/.*/i,
+            handler: "CacheFirst",
             options: {
-              cacheName: 'leaflet-icons-cache',
+              cacheName: "leaflet-icons-cache",
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              }
-            }
-          }
-        ]
-      }
-    })
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+            },
+          },
+        ],
+      },
+    }),
   ],
-  base: '/offline-qth/'
-})
+  base: "/offline-qth/",
+  test: {
+    environment: "jsdom",
+    globals: true,
+    exclude: ["e2e/**", "node_modules/**"],
+  },
+});

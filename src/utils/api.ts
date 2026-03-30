@@ -1,54 +1,84 @@
-import type { LocationData, Location, GeocodingResult } from '../types/location'
-import { haversineDistance } from './coordinate'
+import type {
+  GeocodingResult,
+  Location,
+  LocationData,
+} from "../types/location";
+import { haversineDistance } from "./coordinate";
+
+interface ElevationResponse {
+  elevation?: number | null;
+}
+
+interface NominatimAddress {
+  state?: string;
+  province?: string;
+  city?: string;
+  town?: string;
+  village?: string;
+  municipality?: string;
+  city_district?: string;
+}
+
+interface NominatimResponse {
+  address?: NominatimAddress;
+  display_name?: string;
+}
 
 /**
  * 国土地理院APIで標高を取得
  */
-export async function getElevation(lat: number, lon: number): Promise<number | null> {
+export async function getElevation(
+  lat: number,
+  lon: number,
+): Promise<number | null> {
   try {
-    const url = `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${lon}&lat=${lat}&outtype=JSON`
-    const response = await fetch(url)
-    const data = await response.json()
+    const url = `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${String(lon)}&lat=${String(lat)}&outtype=JSON`;
+    const response = await fetch(url);
+    const data = (await response.json()) as ElevationResponse;
 
     if (data.elevation !== undefined && data.elevation !== null) {
-      return Math.round(data.elevation)
+      return Math.round(data.elevation);
     }
   } catch {
     // Silently fail - elevation is optional
   }
-  return null
+  return null;
 }
 
 /**
  * 逆ジオコーディング（OpenStreetMap Nominatim）
  */
-export async function reverseGeocode(lat: number, lon: number): Promise<GeocodingResult | null> {
+export async function reverseGeocode(
+  lat: number,
+  lon: number,
+): Promise<GeocodingResult | null> {
   try {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=ja`
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${String(lat)}&lon=${String(lon)}&accept-language=ja`;
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'OfflineQTH/2.0'
-      }
-    })
-    const data = await response.json()
+        "User-Agent": "OfflineQTH/2.0",
+      },
+    });
+    const data = (await response.json()) as NominatimResponse;
 
     if (data.address) {
-      const addr = data.address
-      const prefecture = addr.state || addr.province || ''
-      const city = addr.city || addr.town || addr.village || addr.municipality || ''
-      const cityDistrict = addr.city_district || ''
+      const addr = data.address;
+      const prefecture = addr.state ?? addr.province ?? "";
+      const city =
+        addr.city ?? addr.town ?? addr.village ?? addr.municipality ?? "";
+      const cityDistrict = addr.city_district ?? "";
 
       return {
         prefecture,
         city,
         cityDistrict,
-        fullAddress: data.display_name
-      }
+        fullAddress: data.display_name,
+      };
     }
   } catch {
     // Silently fail - geocoding is optional
   }
-  return null
+  return null;
 }
 
 /**
@@ -56,13 +86,13 @@ export async function reverseGeocode(lat: number, lon: number): Promise<Geocodin
  */
 export async function loadLocationData(): Promise<LocationData | null> {
   try {
-    const basePath = import.meta.env.BASE_URL || '/'
-    const response = await fetch(`${basePath}data/location-data.json`)
-    const data = await response.json()
-    return data
-  } catch (error) {
-    console.error('Failed to load location data:', error)
-    return null
+    const basePath = (import.meta.env.BASE_URL as string | undefined) ?? "/";
+    const response = await fetch(`${basePath}data/location-data.json`);
+    const data = (await response.json()) as LocationData;
+    return data;
+  } catch {
+    // Failed to load location data - will fall back to offline mode
+    return null;
   }
 }
 
@@ -72,28 +102,28 @@ export async function loadLocationData(): Promise<LocationData | null> {
 export function findLocationInfo(
   lat: number,
   lon: number,
-  locationData: LocationData | null
+  locationData: LocationData | null,
 ): { prefecture: string; city: string; jcc: string; jcg: string } {
-  if (!locationData || !locationData.locations) {
+  if (!locationData) {
     return {
-      prefecture: 'location.unknown',
-      city: 'location.unknown',
-      jcc: 'location.unknown',
-      jcg: 'location.unknown'
-    }
+      prefecture: "location.unknown",
+      city: "location.unknown",
+      jcc: "location.unknown",
+      jcg: "location.unknown",
+    };
   }
 
   // 最も近い地点を探す（Haversine距離を使用）
-  let minDistance = Infinity
-  let closestLocation: Location | null = null
+  let minDistance = Infinity;
+  let closestLocation: Location | null = null;
 
   for (const location of locationData.locations) {
     // 球面距離（メートル）を計算
-    const distance = haversineDistance(lat, lon, location.lat, location.lon)
+    const distance = haversineDistance(lat, lon, location.lat, location.lon);
 
     if (distance < minDistance) {
-      minDistance = distance
-      closestLocation = location
+      minDistance = distance;
+      closestLocation = location;
     }
   }
 
@@ -102,16 +132,16 @@ export function findLocationInfo(
       prefecture: closestLocation.prefecture,
       city: closestLocation.city,
       jcc: closestLocation.jcc,
-      jcg: closestLocation.jcg
-    }
+      jcg: closestLocation.jcg,
+    };
   }
 
   return {
-    prefecture: 'location.unknown',
-    city: 'location.unknown',
-    jcc: 'location.unknown',
-    jcg: 'location.unknown'
-  }
+    prefecture: "location.unknown",
+    city: "location.unknown",
+    jcc: "location.unknown",
+    jcg: "location.unknown",
+  };
 }
 
 /**
@@ -119,27 +149,27 @@ export function findLocationInfo(
  */
 export function findJccJcgByCity(
   city: string,
-  locationData: LocationData | null
+  locationData: LocationData | null,
 ): { jcc: string; jcg: string } {
-  if (!locationData || !locationData.locations) {
+  if (!locationData) {
     return {
-      jcc: 'location.unknown',
-      jcg: 'location.unknown'
-    }
+      jcc: "location.unknown",
+      jcg: "location.unknown",
+    };
   }
 
   // 市区町村名で完全一致検索
-  const location = locationData.locations.find(loc => loc.city === city)
+  const location = locationData.locations.find((loc) => loc.city === city);
 
   if (location) {
     return {
       jcc: location.jcc,
-      jcg: location.jcg
-    }
+      jcg: location.jcg,
+    };
   }
 
   return {
-    jcc: 'location.unknown',
-    jcg: 'location.unknown'
-  }
+    jcc: "location.unknown",
+    jcg: "location.unknown",
+  };
 }

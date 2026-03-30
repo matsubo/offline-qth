@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
 
 :root {
   /* Technical Cartography Color System */
@@ -13,10 +13,10 @@
 }
 
 body {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   color: #e8eef5;
+  /* Topographic contour pattern */
   background:
-    /* Topographic contour pattern */
     repeating-linear-gradient(
       0deg,
       transparent,
@@ -40,8 +40,16 @@ body {
       rgba(var(--grid-line), 0.05) 100px
     ),
     /* Base gradient */
-    radial-gradient(ellipse at 30% 20%, rgba(var(--accent-teal), 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 80%, rgba(var(--accent-amber), 0.05) 0%, transparent 50%),
+    radial-gradient(
+      ellipse at 30% 20%,
+      rgba(var(--accent-teal), 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 70% 80%,
+      rgba(var(--accent-amber), 0.05) 0%,
+      transparent 50%
+    ),
     linear-gradient(180deg, rgb(var(--bg-base)) 0%, rgb(14, 18, 28) 100%);
   background-attachment: fixed;
   min-height: 100vh;
@@ -50,7 +58,7 @@ body {
 
 /* Scanline effect for CRT feel */
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
@@ -70,26 +78,30 @@ body::before {
 
 /* Typography styles */
 .font-display {
-  font-family: 'Rajdhani', sans-serif;
+  font-family: "Rajdhani", sans-serif;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
 .font-mono-data {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
 
 .font-body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
 }
 
 /* Card with technical borders */
 .card-technical {
   position: relative;
-  background: linear-gradient(135deg, rgba(var(--bg-panel), 0.6) 0%, rgba(var(--bg-panel), 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--bg-panel), 0.6) 0%,
+    rgba(var(--bg-panel), 0.8) 100%
+  );
   backdrop-filter: blur(12px);
   border: 1px solid rgba(var(--grid-line), 0.2);
   box-shadow:
@@ -99,13 +111,14 @@ body::before {
 }
 
 .card-technical::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent 0%,
     rgba(var(--accent-teal), 0.5) 50%,
     transparent 100%
@@ -120,20 +133,19 @@ body::before {
 }
 
 .data-panel::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(var(--accent-teal), 0.02) 3px,
-      rgba(var(--accent-teal), 0.02) 4px
-    );
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(var(--accent-teal), 0.02) 3px,
+    rgba(var(--accent-teal), 0.02) 4px
+  );
   pointer-events: none;
 }
 
@@ -170,7 +182,8 @@ body::before {
 }
 
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -202,7 +215,8 @@ body::before {
 
 .btn-primary {
   position: relative;
-  background: linear-gradient(135deg,
+  background: linear-gradient(
+    135deg,
     rgba(var(--accent-amber), 0.9) 0%,
     rgba(var(--accent-amber), 0.7) 100%
   );
@@ -215,7 +229,8 @@ body::before {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg,
+  background: linear-gradient(
+    135deg,
     rgba(var(--accent-amber), 1) 0%,
     rgba(var(--accent-amber), 0.8) 100%
   );
@@ -227,13 +242,14 @@ body::before {
 }
 
 .btn-primary::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -2px;
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: linear-gradient(45deg,
+  background: linear-gradient(
+    45deg,
     transparent 30%,
     rgba(255, 255, 255, 0.1) 50%,
     transparent 70%
@@ -252,7 +268,7 @@ body::before {
 /* Corner decorations for technical feel */
 .corner-accent::before,
 .corner-accent::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 12px;
   height: 12px;
@@ -275,7 +291,8 @@ body::before {
 
 /* Status indicator pulse */
 @keyframes status-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }

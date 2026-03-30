@@ -1,202 +1,225 @@
-import { useState, useEffect, useCallback } from 'react'
-import type { LocationData, QTHInfo } from '../types/location'
-import { getElevation, reverseGeocode, findLocationInfo, findJccJcgByCity } from '../utils/api'
-import { convertToDMS, calculateGridLocator, getCallArea } from '../utils/coordinate'
-import { trackLocationFetchSuccess, trackLocationFetchError, trackOfflineMode } from '../utils/analytics'
+import { useCallback, useEffect, useState } from "react";
+import type { LocationData, QTHInfo } from "../types/location";
+import {
+  trackLocationFetchError,
+  trackLocationFetchSuccess,
+  trackOfflineMode,
+} from "../utils/analytics";
+import {
+  findJccJcgByCity,
+  findLocationInfo,
+  getElevation,
+  reverseGeocode,
+} from "../utils/api";
+import {
+  calculateGridLocator,
+  convertToDMS,
+  getCallArea,
+} from "../utils/coordinate";
 
 export function useGeolocation(locationData: LocationData | null) {
-  const [status, setStatus] = useState('status.ready')
-  const [location, setLocation] = useState<QTHInfo | null>(null)
-  const [isOnline, setIsOnline] = useState(navigator.onLine)
-  const [error, setError] = useState<string | null>(null)
+  const [status, setStatus] = useState("status.ready");
+  const [location, setLocation] = useState<QTHInfo | null>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [error, setError] = useState<string | null>(null);
 
   // オンライン/オフライン状態の監視
   useEffect(() => {
     const handleOnline = () => {
-      setIsOnline(true)
-      trackOfflineMode(false)
-    }
+      setIsOnline(true);
+      trackOfflineMode(false);
+    };
     const handleOffline = () => {
-      setIsOnline(false)
-      trackOfflineMode(true)
-    }
+      setIsOnline(false);
+      trackOfflineMode(true);
+    };
 
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-    }
-  }, [])
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
-  const fetchLocation = useCallback(async () => {
-    if (!navigator.geolocation) {
-      setError('status.notSupported')
-      setStatus('status.notSupported')
-      return
-    }
-
-    setStatus('status.fetching')
-    setError(null)
+  const fetchLocation = useCallback(() => {
+    setStatus("status.fetching");
+    setError(null);
 
     // オフライン時はタイムアウトを短縮
-    const timeout = navigator.onLine ? 10000 : 5000
+    const timeout = navigator.onLine ? 10000 : 5000;
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-                const lat = position.coords.latitude
-                const lon = position.coords.longitude
-                const altitudeGPS = position.coords.altitude
-                const accuracy = position.coords.accuracy
-        
-                // 即座に表示できる情報をセット
-                const initialData: QTHInfo = {
-                  latitude: convertToDMS(lat, true),
-                  longitude: convertToDMS(lon, false),
-                  latRaw: lat,
-                  lonRaw: lon,
-                  accuracy,
-                  gridLocator: calculateGridLocator(lat, lon),
-                  elevation: altitudeGPS ? `${Math.round(altitudeGPS)}m (GPS)` : 'location.fetching',
-                  prefecture: 'location.fetching',
-                  city: 'location.fetching',
-                  jcc: 'location.fetching',
-                  jcg: 'location.fetching',
-                  callArea: null
-                }
-        
-                setLocation(initialData)
-                setStatus('status.fetchingDetails')
-        
-                let currentElevation: number | null = altitudeGPS ? Math.round(altitudeGPS) : null
-        
-                // オンラインの場合、API で詳細情報を取得
-                if (navigator.onLine) {
-                  try {
-                    // 標高を取得
-                    const elevationFromApi = await getElevation(lat, lon)
-                    if (elevationFromApi !== null) {
-                      initialData.elevation = `${elevationFromApi}m`
-                      currentElevation = elevationFromApi
-                    } else {
-                      initialData.elevation = 'elevation.unavailable'
-                    }
-                  } catch (err) {
-                    console.error('標高取得エラー:', err)
-                    initialData.elevation = 'elevation.failed'
+      (position) => {
+        void (async () => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const altitudeGPS = position.coords.altitude;
+          const accuracy = position.coords.accuracy;
+
+          // 即座に表示できる情報をセット
+          const initialData: QTHInfo = {
+            latitude: convertToDMS(lat, true),
+            longitude: convertToDMS(lon, false),
+            latRaw: lat,
+            lonRaw: lon,
+            accuracy,
+            gridLocator: calculateGridLocator(lat, lon),
+            elevation: altitudeGPS
+              ? `${String(Math.round(altitudeGPS))}m (GPS)`
+              : "location.fetching",
+            prefecture: "location.fetching",
+            city: "location.fetching",
+            jcc: "location.fetching",
+            jcg: "location.fetching",
+            callArea: null,
+          };
+
+          setLocation(initialData);
+          setStatus("status.fetchingDetails");
+
+          let currentElevation: number | null = altitudeGPS
+            ? Math.round(altitudeGPS)
+            : null;
+
+          // オンラインの場合、API で詳細情報を取得
+          if (navigator.onLine) {
+            try {
+              // 標高を取得
+              const elevationFromApi = await getElevation(lat, lon);
+              if (elevationFromApi !== null) {
+                initialData.elevation = `${String(elevationFromApi)}m`;
+                currentElevation = elevationFromApi;
+              } else {
+                initialData.elevation = "elevation.unavailable";
+              }
+            } catch (err) {
+              console.error("標高取得エラー:", err);
+              initialData.elevation = "elevation.failed";
+            }
+
+            // 都道府県・市区町村を逆ジオコーディングAPIで取得
+            try {
+              const geoData = await reverseGeocode(lat, lon);
+              if (geoData && geoData.prefecture && geoData.city) {
+                // API成功時はそのまま使用
+                // 政令指定都市の場合、city_district（区名）を結合して検索
+                const fullCity = geoData.cityDistrict
+                  ? `${geoData.city}${geoData.cityDistrict}`
+                  : geoData.city;
+                initialData.prefecture = geoData.prefecture;
+                initialData.city = fullCity;
+
+                // APIで取得した市区町村名からJCC/JCGを検索
+                let jccJcgData = findJccJcgByCity(fullCity, locationData);
+
+                // 完全一致しない場合、座標ベースのフォールバック
+                if (jccJcgData.jcc === "location.unknown") {
+                  const locationInfo = findLocationInfo(lat, lon, locationData);
+                  jccJcgData = { jcc: locationInfo.jcc, jcg: locationInfo.jcg };
+                  // 表示用の市区町村名もローカルデータから取得
+                  if (locationInfo.city !== "location.unknown") {
+                    initialData.city = locationInfo.city;
                   }
-        
-                  // 都道府県・市区町村を逆ジオコーディングAPIで取得
-                  try {
-                    const geoData = await reverseGeocode(lat, lon)
-                    if (geoData && geoData.prefecture && geoData.city) {
-                      // API成功時はそのまま使用
-                      // 政令指定都市の場合、city_district（区名）を結合して検索
-                      const fullCity = geoData.cityDistrict ? `${geoData.city}${geoData.cityDistrict}` : geoData.city
-                      initialData.prefecture = geoData.prefecture
-                      initialData.city = fullCity
-
-                      // APIで取得した市区町村名からJCC/JCGを検索
-                      let jccJcgData = findJccJcgByCity(fullCity, locationData)
-
-                      // 完全一致しない場合、座標ベースのフォールバック
-                      if (jccJcgData.jcc === 'location.unknown') {
-                        const locationInfo = findLocationInfo(lat, lon, locationData)
-                        jccJcgData = { jcc: locationInfo.jcc, jcg: locationInfo.jcg }
-                        // 表示用の市区町村名もローカルデータから取得
-                        if (locationInfo.city !== 'location.unknown') {
-                          initialData.city = locationInfo.city
-                        }
-                      }
-                      initialData.jcc = jccJcgData.jcc
-                      initialData.jcg = jccJcgData.jcg
-
-                      // コールエリアを取得
-                      initialData.callArea = getCallArea(geoData.prefecture)
-                    } else {
-                      // APIが空の結果を返した場合、ローカルデータにフォールバック
-                      const locationInfo = findLocationInfo(lat, lon, locationData)
-                      initialData.prefecture = locationInfo.prefecture
-                      initialData.city = locationInfo.city
-                      initialData.jcc = locationInfo.jcc
-                      initialData.jcg = locationInfo.jcg
-
-                      // コールエリアを取得
-                      initialData.callArea = getCallArea(locationInfo.prefecture)
-                    }
-                  } catch (err) {
-                    console.error('逆ジオコーディングエラー:', err)
-                    // APIエラー時、ローカルデータにフォールバック
-                    const locationInfo = findLocationInfo(lat, lon, locationData)
-                    initialData.prefecture = locationInfo.prefecture
-                    initialData.city = locationInfo.city
-                    initialData.jcc = locationInfo.jcc
-                    initialData.jcg = locationInfo.jcg
-
-                    // コールエリアを取得
-                    initialData.callArea = getCallArea(locationInfo.prefecture)
-                  }
-                } else {
-                  // オフラインの場合
-                  const locationInfo = findLocationInfo(lat, lon, locationData)
-                  initialData.prefecture = locationInfo.prefecture !== 'location.unknown' ? `${locationInfo.prefecture} (推定)` : 'location.unknown'
-                  initialData.city = locationInfo.city !== 'location.unknown' ? `${locationInfo.city} (推定)` : 'location.unknown'
-                  initialData.jcc = locationInfo.jcc
-                  initialData.jcg = locationInfo.jcg
-                  initialData.elevation = 'elevation.unavailable'
-
-                  // コールエリアを取得
-                  initialData.callArea = getCallArea(locationInfo.prefecture)
                 }
+                initialData.jcc = jccJcgData.jcc;
+                initialData.jcg = jccJcgData.jcg;
 
-                setLocation({ ...initialData })
+                // コールエリアを取得
+                initialData.callArea = getCallArea(geoData.prefecture);
+              } else {
+                // APIが空の結果を返した場合、ローカルデータにフォールバック
+                const locationInfo = findLocationInfo(lat, lon, locationData);
+                initialData.prefecture = locationInfo.prefecture;
+                initialData.city = locationInfo.city;
+                initialData.jcc = locationInfo.jcc;
+                initialData.jcg = locationInfo.jcg;
 
-                        setStatus(navigator.onLine ? 'status.success' : 'status.offline')
+                // コールエリアを取得
+                initialData.callArea = getCallArea(locationInfo.prefecture);
+              }
+            } catch (err) {
+              console.error("逆ジオコーディングエラー:", err);
+              // APIエラー時、ローカルデータにフォールバック
+              const locationInfo = findLocationInfo(lat, lon, locationData);
+              initialData.prefecture = locationInfo.prefecture;
+              initialData.city = locationInfo.city;
+              initialData.jcc = locationInfo.jcc;
+              initialData.jcg = locationInfo.jcg;
 
-                        // Track location fetch success
-                        trackLocationFetchSuccess({
-                          latitude: lat,
-                          longitude: lon,
-                          accuracy,
-                          hasElevation: currentElevation !== null,
-                          hasAddress: initialData.prefecture !== 'location.unknown' && initialData.city !== 'location.unknown',
-                          isOnline: navigator.onLine
-                        })
+              // コールエリアを取得
+              initialData.callArea = getCallArea(locationInfo.prefecture);
+            }
+          } else {
+            // オフラインの場合
+            const locationInfo = findLocationInfo(lat, lon, locationData);
+            initialData.prefecture =
+              locationInfo.prefecture !== "location.unknown"
+                ? `${locationInfo.prefecture} (推定)`
+                : "location.unknown";
+            initialData.city =
+              locationInfo.city !== "location.unknown"
+                ? `${locationInfo.city} (推定)`
+                : "location.unknown";
+            initialData.jcc = locationInfo.jcc;
+            initialData.jcg = locationInfo.jcg;
+            initialData.elevation = "elevation.unavailable";
 
-                      },      (error) => {
-        let errorMessage = 'status.error'
-        let errorType = 'unknown'
+            // コールエリアを取得
+            initialData.callArea = getCallArea(locationInfo.prefecture);
+          }
+
+          setLocation({ ...initialData });
+
+          setStatus(navigator.onLine ? "status.success" : "status.offline");
+
+          // Track location fetch success
+          trackLocationFetchSuccess({
+            latitude: lat,
+            longitude: lon,
+            accuracy,
+            hasElevation: currentElevation !== null,
+            hasAddress:
+              initialData.prefecture !== "location.unknown" &&
+              initialData.city !== "location.unknown",
+            isOnline: navigator.onLine,
+          });
+        })();
+      },
+      (error: GeolocationPositionError) => {
+        let errorMessage = "status.error";
+        let errorType = "unknown";
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'status.permissionDenied'
-            errorType = 'permission_denied'
-            break
+            errorMessage = "status.permissionDenied";
+            errorType = "permission_denied";
+            break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'status.unavailable'
-            errorType = 'position_unavailable'
-            break
+            errorMessage = "status.unavailable";
+            errorType = "position_unavailable";
+            break;
           case error.TIMEOUT:
-            errorMessage = 'status.timeout'
-            errorType = 'timeout'
-            break
+            errorMessage = "status.timeout";
+            errorType = "timeout";
+            break;
           default:
-            errorMessage = 'status.error'
-            errorType = 'unknown'
+            errorMessage = "status.error";
+            errorType = "unknown";
         }
-        setError(errorMessage)
-        setStatus(errorMessage)
+        setError(errorMessage);
+        setStatus(errorMessage);
 
         // Track location fetch error
-        trackLocationFetchError(errorType, error.message)
+        trackLocationFetchError(errorType, error.message);
       },
       {
         enableHighAccuracy: true,
         timeout,
-        maximumAge: 300000 // 5分間はキャッシュを使用（オフライン対応）
-      }
-    )
-  }, [locationData])
+        maximumAge: 300000, // 5分間はキャッシュを使用（オフライン対応）
+      },
+    );
+  }, [locationData]);
 
   // 初回自動取得を削除（ユーザージェスチャーが必要なため）
   // ユーザーが「Refetch」ボタンをクリックした時のみ取得する
@@ -206,6 +229,6 @@ export function useGeolocation(locationData: LocationData | null) {
     location,
     isOnline,
     error,
-    refetch: fetchLocation
-  }
+    refetch: fetchLocation,
+  };
 }
