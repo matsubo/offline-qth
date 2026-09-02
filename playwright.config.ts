@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// The E2E dev server binds strictly to its own port. Vite's default 5173 is
+// shared with other local projects (including Docker port-forwards), and
+// Playwright cannot tell a foreign server from ours, so it must never reuse one.
+const port = Number(process.env.E2E_PORT ?? 5199);
+const baseURL = `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -8,7 +14,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL,
     trace: "on-first-retry",
     locale: "ja-JP",
   },
@@ -21,8 +27,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "bun run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
+    command: `bun run dev --port ${port} --strictPort`,
+    url: baseURL,
+    reuseExistingServer: false,
   },
 });
