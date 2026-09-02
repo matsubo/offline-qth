@@ -5,7 +5,6 @@ node_modules/
 .idea/
 dist/
 .backup/
-bun.lockb
 playwright-report/
 test-results/
 .env
@@ -13,3 +12,4 @@ test-results/
 master.json
 .playwright-mcp/
 .lighthouseci/
+package-lock.json

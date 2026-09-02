@@ -49,7 +49,7 @@ bun run version:major
    bun run build
    ```
 
-3. コミット & タグ作成（npm version が自動的に行います）:
+3. コミット & タグ作成（bun pm version が自動的に行います）:
    ```bash
    git push && git push --tags
    ```
